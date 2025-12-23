@@ -1,1 +1,1 @@
-# CR3-to-jpeg-converter
+# Universal RAW to jpeg Converter
