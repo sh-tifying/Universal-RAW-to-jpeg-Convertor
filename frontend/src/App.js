@@ -13,7 +13,7 @@ function App() {
   // 🔴 IMPORTANT: Update this URL to your Render backend
   // If running locally, use: "http://127.0.0.1:5000/convert"
   // ---------------------------------------------------------
-  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert"; 
+  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com"; 
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
