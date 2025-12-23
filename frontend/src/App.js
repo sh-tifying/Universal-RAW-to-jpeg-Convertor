@@ -30,7 +30,7 @@ function App() {
       try {
         setStatus(`Processing ${i + 1}/${selectedFiles.length}: ${file.name}...`);
         
-        const response = await fetch("http://127.0.0.1:5000/convert", {
+        const response = await fetch("https://universal-raw-to-jpeg-convertor-api.onrender.com/convert", {
           method: "POST",
           body: formData,
         });
