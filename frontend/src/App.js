@@ -19,8 +19,10 @@ function App() {
   const handleConvert = async () => {
     if (selectedFiles.length === 0) return;
 
+    // Reset status and keep old images? No, let's clear for a fresh run
     setStatus("Converting...");
     const newConvertedImages = [];
+    let errorCount = 0;
 
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
@@ -30,7 +32,7 @@ function App() {
       try {
         setStatus(`Processing ${i + 1}/${selectedFiles.length}: ${file.name}...`);
         
-        const response = await fetch("https://universal-raw-to-jpeg-convertor-api.onrender.com/convert", {
+        const response = await fetch("https://YOUR-RENDER-URL.onrender.com/convert", {
           method: "POST",
           body: formData,
         });
@@ -38,9 +40,6 @@ function App() {
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
-          
-          // Use the original filename but switch extension to .jpg
-          // This handles .ARW, .NEF, .CR3, etc.
           const newName = file.name.substring(0, file.name.lastIndexOf('.')) + ".jpg";
 
           newConvertedImages.push({
@@ -49,14 +48,26 @@ function App() {
             url: url,
             data: blob 
           });
+        } else {
+          console.error("Server Error:", response.statusText);
+          errorCount++;
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Connection Error:", error);
+        errorCount++;
       }
     }
 
     setConvertedImages(newConvertedImages);
-    setStatus("Done!");
+    
+    // Give smarter feedback
+    if (errorCount > 0 && newConvertedImages.length === 0) {
+      setStatus(`Failed: Server crashed or timed out on all ${errorCount} files.`);
+    } else if (errorCount > 0) {
+      setStatus(`Done! Converted ${newConvertedImages.length} images (${errorCount} failed).`);
+    } else {
+      setStatus("Done! All images converted successfully.");
+    }
   };
 
   const downloadAll = () => {
