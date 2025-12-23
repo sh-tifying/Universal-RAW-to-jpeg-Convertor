@@ -36,14 +36,15 @@ def convert_image():
         print(f"Processing: {file.filename}") # Log what's happening
 
         # 1. Read the RAW file from memory
+        # 1. Read the RAW file from memory
         with rawpy.imread(file.stream) as raw:
             # 2. Convert to RGB
-            # use_camera_wb=True: Uses the White Balance set in the camera
-            # no_auto_bright=False: Automatically adjusts brightness (good for generic RAWs)
+            # half_size=True: Crucial for free servers! Reduces RAM usage by 4x.
             rgb = raw.postprocess(
                 use_camera_wb=True, 
                 bright=1.0, 
-                user_sat=None
+                user_sat=None,
+                half_size=True 
             )
             
         # 3. Save to a memory buffer as JPEG
