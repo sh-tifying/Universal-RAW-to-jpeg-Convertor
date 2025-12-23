@@ -4,7 +4,8 @@ import rawpy
 import imageio
 import io
 import os
-import gc # Garbage Collector to free RAM immediately
+import gc
+import tempfile
 
 app = Flask(__name__)
 CORS(app)
@@ -30,19 +31,26 @@ def convert_image():
     if not is_raw_file(file.filename):
         return f"File type '{file.filename}' might not be supported.", 400
 
+    temp_path = None
+
     try:
         print(f"Processing: {file.filename}")
         
-        # Read file into memory
-        file_bytes = file.read()
+        # 1. SAVE TO DISK (Avoids RAM explosion)
+        # We create a temp file on the hard drive
+        file_ext = os.path.splitext(file.filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as temp:
+            file.save(temp.name)
+            temp_path = temp.name
         
-        with rawpy.imread(io.BytesIO(file_bytes)) as raw:
+        # 2. Open from Disk
+        with rawpy.imread(temp_path) as raw:
             
-            # STRATEGY 1: Try to extract the Embedded JPEG (Instant & Low RAM)
+            # STRATEGY: Try Embedded JPEG first (Fastest)
             try:
                 thumb = raw.extract_thumb()
                 if thumb.format == rawpy.ThumbFormat.JPEG:
-                    print("Method: Extracted Embedded JPEG (Fast)")
+                    print("Success: Extracted Embedded JPEG")
                     return send_file(
                         io.BytesIO(thumb.data),
                         mimetype='image/jpeg',
@@ -50,23 +58,21 @@ def convert_image():
                         download_name=f"{os.path.splitext(file.filename)[0]}.jpg"
                     )
             except Exception as e:
-                print(f"No embedded thumbnail found, falling back to processing: {e}")
+                print(f"No thumbnail found: {e}")
 
-            # STRATEGY 2: Fallback to Processing (if no thumbnail)
-            # half_size=True is MANDATORY for free servers
-            print("Method: Raw Processing (Slower)")
+            # FALLBACK: Half-size conversion
+            print("Fallback: converting raw data...")
             rgb = raw.postprocess(
                 use_camera_wb=True, 
                 bright=1.0, 
                 user_sat=None,
-                half_size=True 
+                half_size=True # Mandatory for free tier
             )
             
             img_io = io.BytesIO()
             imageio.imsave(img_io, rgb, format='jpeg', quality=90)
             img_io.seek(0)
             
-            # Clean up memory explicitly
             del rgb
             del raw
             gc.collect()
@@ -76,9 +82,12 @@ def convert_image():
     except Exception as e:
         print(f"CRASH ERROR: {e}")
         return str(e), 500
+        
     finally:
-        # Final cleanup ensures server doesn't hold onto the file
-        file.close()
+        # 3. CLEAN UP DISK
+        # Explicitly delete the temp file to save space
+        if temp_path and os.path.exists(temp_path):
+            os.remove(temp_path)
         gc.collect()
 
 if __name__ == '__main__':
