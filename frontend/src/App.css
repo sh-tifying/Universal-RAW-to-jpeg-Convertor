@@ -1,15 +1,11 @@
-/* App.css - Vibrant Dark Modern Theme */
+/* App.css - Neon Glassmorphism with Particle Support */
 
-/* 1. Global Reset & Background */
+/* 1. Global Reset */
 body {
   margin: 0;
   padding: 0;
-  /* Deep dark blue-black background */
-  background-color: #0b0d11; 
-  /* Subtle ambient glow in the background */
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 20%),
-    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 20%);
+  /* We remove the background color here so the Particles component shows through */
+  background: transparent; 
   color: #e2e8f0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
@@ -17,6 +13,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden; /* Prevents horizontal scrollbar */
 }
 
 /* 2. Main Container */
@@ -25,6 +22,8 @@ body {
   max-width: 900px;
   padding: 2rem;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1; /* Ensures content sits ABOVE the background stars */
 }
 
 /* 3. Header Styling */
@@ -53,12 +52,14 @@ h1 {
   font-weight: 400;
 }
 
-/* 4. The Upload Zone */
+/* 4. The Upload Zone (Glassmorphism) */
 .upload-zone {
-  background: rgba(30, 41, 59, 0.5); /* Semi-transparent */
-  backdrop-filter: blur(10px);
-  border: 2px dashed #475569;
-  border-radius: 16px;
+  /* Semi-transparent background to let stars show through */
+  background: rgba(15, 23, 42, 0.6); 
+  backdrop-filter: blur(12px); /* Blurs the stars behind it slightly for readability */
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 24px;
   padding: 4rem 2rem;
   text-align: center;
   transition: all 0.3s ease;
@@ -76,13 +77,13 @@ h1 {
   z-index: 10;
 }
 
-/* Hover Effect with Color */
+/* Hover Effect */
 @media (hover: hover) {
   .upload-zone:hover {
-    border-color: #8b5cf6; /* Violet border */
-    background: rgba(30, 41, 59, 0.8);
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15); /* Purple glow */
-    transform: translateY(-2px);
+    border-color: #8b5cf6;
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+    transform: scale(1.01);
   }
 }
 
@@ -119,7 +120,7 @@ h1 {
 .btn {
   padding: 14px 36px;
   border: none;
-  border-radius: 50px; /* Pill shape */
+  border-radius: 50px;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -137,7 +138,7 @@ h1 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
 }
 
 .btn-primary:active {
@@ -152,15 +153,16 @@ h1 {
   transform: none;
 }
 
-/* Secondary Button: Clean Outline */
+/* Secondary Button */
 .btn-secondary {
-  background: transparent;
-  border: 2px solid #4f46e5;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid #4f46e5;
   color: #818cf8;
+  backdrop-filter: blur(4px);
 }
 
 .btn-secondary:hover {
-  background: rgba(79, 70, 229, 0.1);
+  background: rgba(79, 70, 229, 0.2);
   color: white;
   box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
 }
@@ -177,8 +179,8 @@ h1 {
   color: #94a3b8;
 }
 .status-success { 
-  color: #34d399; /* Emerald Green */
-  text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+  color: #34d399; 
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
 }
 
 /* 7. Image Grid */
@@ -189,8 +191,9 @@ h1 {
 }
 
 .image-card {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -198,9 +201,10 @@ h1 {
 }
 
 .image-card:hover {
-  border-color: #6366f1; /* Indigo border on hover */
+  border-color: #6366f1;
   transform: translateY(-6px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 2;
 }
 
 .preview-img {
@@ -227,7 +231,7 @@ h1 {
 .btn-download-mini {
   width: 100%;
   padding: 10px;
-  background: #0f172a;
+  background: rgba(15, 23, 42, 0.5);
   color: #60a5fa;
   border: 1px solid #334155;
   border-radius: 8px;
