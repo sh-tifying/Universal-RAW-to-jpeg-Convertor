@@ -1,4 +1,4 @@
-/* App.css - Modern Glassmorphism Theme */
+/* App.css - Mobile Responsive Glassmorphism */
 
 /* 1. Global Reset & Background */
 body {
@@ -8,7 +8,7 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: center; /* Vertically center on desktop */
   justify-content: center;
   color: #2d3748;
 }
@@ -16,24 +16,27 @@ body {
 /* 2. Main Card Container */
 .app-container {
   background: rgba(255, 255, 255, 0.95);
-  padding: 2rem 3rem;
+  padding: 2.5rem 3rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 800px;
   text-align: center;
   margin: 20px;
+  box-sizing: border-box; /* Ensures padding doesn't break width */
 }
 
 h1 {
   color: #4a5568;
   margin-bottom: 0.5rem;
   font-size: 2.5rem;
+  line-height: 1.2;
 }
 
 .subtitle {
   color: #718096;
   margin-bottom: 2rem;
+  font-size: 1.1rem;
 }
 
 /* 3. The Upload Box (Drop Zone) */
@@ -45,14 +48,14 @@ h1 {
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
+  /* Prevent blue highlight on tap on mobile */
+  -webkit-tap-highlight-color: transparent; 
 }
 
-.upload-zone:hover {
-  border-color: #667eea;
-  background-color: #ebf4ff;
+.upload-zone:active {
+  background-color: #e2e8f0;
 }
 
-/* Hide the ugly default file input but make it clickable */
 .file-input {
   position: absolute;
   top: 0;
@@ -75,10 +78,11 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 15px;
+  flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
 }
 
 .btn {
-  padding: 12px 28px;
+  padding: 14px 28px; /* Slightly larger touch target */
   border: none;
   border-radius: 50px;
   font-size: 1rem;
@@ -87,7 +91,9 @@ h1 {
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  min-width: 160px; /* Ensures buttons aren't too tiny */
 }
 
 .btn:active {
@@ -130,8 +136,8 @@ h1 {
 /* 6. Results Grid */
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
   margin-top: 30px;
 }
 
@@ -140,11 +146,6 @@ h1 {
   padding: 10px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.image-card:hover {
-  transform: translateY(-5px);
 }
 
 .preview-img {
@@ -162,4 +163,52 @@ h1 {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: 8px;
+}
+
+/* --- 📱 MOBILE RESPONSIVE TWEAKS --- */
+@media (max-width: 600px) {
+  /* 1. Remove vertical centering to let content scroll naturally */
+  body {
+    align-items: flex-start; 
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  /* 2. Slimmer Container */
+  .app-container {
+    padding: 1.5rem;
+    width: 92%;
+    margin: 10px auto;
+  }
+
+  /* 3. Smaller Heading */
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  /* 4. Stack Buttons Vertically */
+  .action-area {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%; /* Full width buttons for easy thumb tapping */
+    padding: 16px; /* Fat buttons are easier to tap */
+  }
+
+  /* 5. Compact Upload Zone */
+  .upload-zone {
+    padding: 30px 20px;
+  }
+
+  /* 6. Adjust Grid for Mobile (2 columns fixed is usually safer on phones) */
+  .image-grid {
+    grid-template-columns: 1fr 1fr; 
+    gap: 10px;
+  }
 }
