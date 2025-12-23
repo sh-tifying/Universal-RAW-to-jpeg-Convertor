@@ -1,11 +1,16 @@
-/* App.css - Sharp Modern Dark Theme */
+/* App.css - Vibrant Dark Modern Theme */
 
-/* 1. Global Reset & Dark Theme */
+/* 1. Global Reset & Background */
 body {
   margin: 0;
   padding: 0;
-  background-color: #0f1115; /* Deep matte black/blue */
-  color: #e2e8f0; /* Off-white text for readability */
+  /* Deep dark blue-black background */
+  background-color: #0b0d11; 
+  /* Subtle ambient glow in the background */
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 20%);
+  color: #e2e8f0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   display: flex;
@@ -14,7 +19,7 @@ body {
   justify-content: center;
 }
 
-/* 2. Main Container (The "Card") */
+/* 2. Main Container */
 .app-container {
   width: 100%;
   max-width: 900px;
@@ -29,34 +34,38 @@ body {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(90deg, #fff 0%, #94a3b8 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  /* VIBRANT GRADIENT TEXT */
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text; /* Vendor prefix for Chrome/Safari */
+  background-clip: text;         /* Standard property */
   -webkit-text-fill-color: transparent;
   letter-spacing: -1px;
+  filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.3)); /* Glow effect */
 }
 
 .subtitle {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 1.1rem;
   margin-top: 0.5rem;
   font-weight: 400;
 }
 
-/* 4. The Upload Zone (Sharp & Technical) */
+/* 4. The Upload Zone */
 .upload-zone {
-  background: #161b22;
-  border: 2px dashed #30363d;
-  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5); /* Semi-transparent */
+  backdrop-filter: blur(10px);
+  border: 2px dashed #475569;
+  border-radius: 16px;
   padding: 4rem 2rem;
   text-align: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
   cursor: pointer;
   margin-bottom: 2rem;
+  overflow: hidden;
 }
 
 .file-input {
@@ -64,35 +73,41 @@ h1 {
   top: 0; left: 0; width: 100%; height: 100%;
   opacity: 0;
   cursor: pointer;
+  z-index: 10;
 }
 
-/* Desktop Hover Effect */
+/* Hover Effect with Color */
 @media (hover: hover) {
   .upload-zone:hover {
-    border-color: #58a6ff;
-    background: #1c2128;
-    box-shadow: 0 0 20px rgba(88, 166, 255, 0.15);
+    border-color: #8b5cf6; /* Violet border */
+    background: rgba(30, 41, 59, 0.8);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15); /* Purple glow */
+    transform: translateY(-2px);
   }
 }
 
 .upload-icon {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-bottom: 1rem;
   display: block;
-  color: #58a6ff; /* Pro Blue */
+  /* Icon Gradient */
+  background: linear-gradient(135deg, #60a5fa, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .upload-text {
-  color: #8b949e;
+  color: #94a3b8;
   font-size: 1rem;
 }
 
 .upload-text span {
-  color: #c9d1d9;
+  color: #e2e8f0;
   font-weight: 600;
 }
 
-/* 5. Buttons (Sharp & Rectangular) */
+/* 5. Buttons */
 .action-area {
   display: flex;
   justify-content: center;
@@ -102,56 +117,71 @@ h1 {
 }
 
 .btn {
-  padding: 14px 32px;
+  padding: 14px 36px;
   border: none;
-  border-radius: 6px; /* Sharper corners */
+  border-radius: 50px; /* Pill shape */
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
+/* Primary Button: VIBRANT GRADIENT */
 .btn-primary {
-  background: #238636; /* GitHub/Pro Green */
+  background: linear-gradient(90deg, #4f46e5 0%, #ec4899 100%);
   color: white;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.2); /* Subtle 3D effect */
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
 }
 
 .btn-primary:active {
-  transform: translateY(2px);
-  box-shadow: none;
+  transform: scale(0.98);
 }
 
 .btn-primary:disabled {
-  background: #21262d;
-  color: #484f58;
+  background: #334155;
+  color: #64748b;
   box-shadow: none;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* Secondary Button: Clean Outline */
 .btn-secondary {
-  background: #1f6feb; /* Pro Blue */
+  background: transparent;
+  border: 2px solid #4f46e5;
+  color: #818cf8;
+}
+
+.btn-secondary:hover {
+  background: rgba(79, 70, 229, 0.1);
   color: white;
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
 }
 
 /* 6. Status Bar */
 .status-bar {
   text-align: center;
   margin-bottom: 2rem;
-  height: 20px; /* Prevent layout jump */
+  height: 24px;
 }
 .status-text {
-  font-size: 0.9rem;
-  color: #8b949e;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #94a3b8;
 }
-.status-success { color: #3fb950; }
+.status-success { 
+  color: #34d399; /* Emerald Green */
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+}
 
-/* 7. Image Grid (Bento Style) */
+/* 7. Image Grid */
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -159,64 +189,68 @@ h1 {
 }
 
 .image-card {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .image-card:hover {
-  border-color: #8b949e;
-  transform: translateY(-4px);
+  border-color: #6366f1; /* Indigo border on hover */
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .preview-img {
   width: 100%;
   height: 140px;
   object-fit: cover;
-  background: #0d1117;
+  background: #0f172a;
 }
 
 .card-info {
-  padding: 12px;
+  padding: 16px;
   text-align: left;
 }
 
 .file-name {
-  font-size: 0.8rem;
-  color: #c9d1d9;
+  font-size: 0.85rem;
+  color: #cbd5e1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .btn-download-mini {
   width: 100%;
-  padding: 8px;
-  background: #21262d;
-  color: #58a6ff;
-  border: 1px solid #30363d;
-  border-radius: 4px;
+  padding: 10px;
+  background: #0f172a;
+  color: #60a5fa;
+  border: 1px solid #334155;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.2s;
+  text-transform: uppercase;
 }
 
 .btn-download-mini:hover {
-  background: #58a6ff;
-  color: white;
-  border-color: #58a6ff;
+  background: #60a5fa;
+  color: #0f172a;
+  border-color: #60a5fa;
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
 }
 
 /* Mobile Tweaks */
 @media (max-width: 600px) {
-  h1 { font-size: 2rem; }
-  .app-container { padding: 1rem; }
-  .upload-zone { padding: 2rem 1rem; }
-  .action-area { flex-direction: column; }
-  .btn { width: 100%; justify-content: center; }
-  .image-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  h1 { font-size: 2.5rem; }
+  .app-container { padding: 1.5rem; }
+  .upload-zone { padding: 3rem 1.5rem; }
+  .action-area { flex-direction: column; gap: 12px; }
+  .btn { width: 100%; justify-content: center; padding: 16px; }
+  .image-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
 }
