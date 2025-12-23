@@ -1,0 +1,165 @@
+/* App.css - Modern Glassmorphism Theme */
+
+/* 1. Global Reset & Background */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2d3748;
+}
+
+/* 2. Main Card Container */
+.app-container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+  margin: 20px;
+}
+
+h1 {
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+}
+
+.subtitle {
+  color: #718096;
+  margin-bottom: 2rem;
+}
+
+/* 3. The Upload Box (Drop Zone) */
+.upload-zone {
+  border: 3px dashed #cbd5e0;
+  border-radius: 12px;
+  padding: 40px;
+  background-color: #f7fafc;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.upload-zone:hover {
+  border-color: #667eea;
+  background-color: #ebf4ff;
+}
+
+/* Hide the ugly default file input but make it clickable */
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* 4. Buttons */
+.action-area {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+}
+
+.btn-primary:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-warning {
+  background: #ecc94b;
+  color: #744210;
+}
+
+.btn-success {
+  background: #48bb78;
+  color: white;
+}
+
+/* 5. Status Text */
+.status-text {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.status-done {
+  color: #48bb78;
+}
+
+/* 6. Results Grid */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.image-card {
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.image-card:hover {
+  transform: translateY(-5px);
+}
+
+.preview-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: #4a5568;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 8px;
+}
