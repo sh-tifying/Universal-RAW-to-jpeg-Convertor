@@ -1,4 +1,4 @@
-/* App.css - Mobile Responsive Glassmorphism */
+/* App.css - Mobile Responsive + Desktop Hover Fixed */
 
 /* 1. Global Reset & Background */
 body {
@@ -8,7 +8,7 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   display: flex;
-  align-items: center; /* Vertically center on desktop */
+  align-items: center;
   justify-content: center;
   color: #2d3748;
 }
@@ -23,7 +23,7 @@ body {
   max-width: 800px;
   text-align: center;
   margin: 20px;
-  box-sizing: border-box; /* Ensures padding doesn't break width */
+  box-sizing: border-box;
 }
 
 h1 {
@@ -39,7 +39,7 @@ h1 {
   font-size: 1.1rem;
 }
 
-/* 3. The Upload Box (Drop Zone) */
+/* 3. The Upload Box */
 .upload-zone {
   border: 3px dashed #cbd5e0;
   border-radius: 12px;
@@ -48,12 +48,22 @@ h1 {
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
-  /* Prevent blue highlight on tap on mobile */
   -webkit-tap-highlight-color: transparent; 
+}
+
+/* --- RESTORED HOVER EFFECT (Desktop Only) --- */
+@media (hover: hover) {
+  .upload-zone:hover {
+    border-color: #667eea;
+    background-color: #ebf4ff;
+    transform: scale(1.01); /* Subtle pop effect */
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  }
 }
 
 .upload-zone:active {
   background-color: #e2e8f0;
+  transform: scale(0.98);
 }
 
 .file-input {
@@ -78,11 +88,11 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 15px;
-  flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+  flex-wrap: wrap; 
 }
 
 .btn {
-  padding: 14px 28px; /* Slightly larger touch target */
+  padding: 14px 28px;
   border: none;
   border-radius: 50px;
   font-size: 1rem;
@@ -93,7 +103,11 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 160px; /* Ensures buttons aren't too tiny */
+  min-width: 160px;
+}
+
+.btn:hover {
+  transform: translateY(-2px); /* Slight lift on hover */
 }
 
 .btn:active {
@@ -110,6 +124,7 @@ h1 {
   background: #cbd5e0;
   cursor: not-allowed;
   box-shadow: none;
+  transform: none;
 }
 
 .btn-warning {
@@ -146,6 +161,11 @@ h1 {
   padding: 10px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.image-card:hover {
+  transform: translateY(-5px);
 }
 
 .preview-img {
@@ -167,21 +187,18 @@ h1 {
 
 /* --- 📱 MOBILE RESPONSIVE TWEAKS --- */
 @media (max-width: 600px) {
-  /* 1. Remove vertical centering to let content scroll naturally */
   body {
     align-items: flex-start; 
     padding-top: 20px;
     padding-bottom: 20px;
   }
 
-  /* 2. Slimmer Container */
   .app-container {
     padding: 1.5rem;
     width: 92%;
     margin: 10px auto;
   }
 
-  /* 3. Smaller Heading */
   h1 {
     font-size: 1.8rem;
   }
@@ -190,23 +207,20 @@ h1 {
     font-size: 0.95rem;
   }
 
-  /* 4. Stack Buttons Vertically */
   .action-area {
     flex-direction: column;
     width: 100%;
   }
 
   .btn {
-    width: 100%; /* Full width buttons for easy thumb tapping */
-    padding: 16px; /* Fat buttons are easier to tap */
+    width: 100%;
+    padding: 16px;
   }
 
-  /* 5. Compact Upload Zone */
   .upload-zone {
     padding: 30px 20px;
   }
 
-  /* 6. Adjust Grid for Mobile (2 columns fixed is usually safer on phones) */
   .image-grid {
     grid-template-columns: 1fr 1fr; 
     gap: 10px;
