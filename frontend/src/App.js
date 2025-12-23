@@ -8,6 +8,10 @@ function App() {
   const [convertedImages, setConvertedImages] = useState([]);
   const [status, setStatus] = useState("Idle");
 
+  // YOUR API URL - MAKE SURE THIS IS CORRECT
+  // const API_URL = "http://127.0.0.1:5000/convert"; // FOR LOCALHOST
+  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert"; // FOR CLOUD
+
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFiles(Array.from(event.target.files));
@@ -19,8 +23,7 @@ function App() {
   const handleConvert = async () => {
     if (selectedFiles.length === 0) return;
 
-    // Reset status and keep old images? No, let's clear for a fresh run
-    setStatus("Converting...");
+    setStatus("Processing...");
     const newConvertedImages = [];
     let errorCount = 0;
 
@@ -30,9 +33,9 @@ function App() {
       formData.append("file", file);
 
       try {
-        setStatus(`Processing ${i + 1}/${selectedFiles.length}: ${file.name}...`);
+        setStatus(`Processing ${i + 1} of ${selectedFiles.length}...`);
         
-        const response = await fetch("https://universal-raw-to-jpeg-convertor-api.onrender.com/convert", {
+        const response = await fetch(API_URL, {
           method: "POST",
           body: formData,
         });
@@ -49,24 +52,19 @@ function App() {
             data: blob 
           });
         } else {
-          console.error("Server Error:", response.statusText);
           errorCount++;
         }
       } catch (error) {
-        console.error("Connection Error:", error);
+        console.error(error);
         errorCount++;
       }
     }
 
     setConvertedImages(newConvertedImages);
-    
-    // Give smarter feedback
-    if (errorCount > 0 && newConvertedImages.length === 0) {
-      setStatus(`Failed: Server crashed or timed out on all ${errorCount} files.`);
-    } else if (errorCount > 0) {
-      setStatus(`Done! Converted ${newConvertedImages.length} images (${errorCount} failed).`);
+    if (errorCount > 0) {
+      setStatus(`Completed with ${errorCount} errors.`);
     } else {
-      setStatus("Done! All images converted successfully.");
+      setStatus("Done!");
     }
   };
 
@@ -82,65 +80,71 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* UPDATED HEADING HERE */}
-      <h1>RAW to JPEG Converter</h1>
-      <p className="subtitle">Professional Universal RAW Conversion Tool</p>
+      
+      {/* Header Section */}
+      <header className="header">
+        <h1>RAW to JPEG</h1>
+        <p className="subtitle">High-Performance Converter</p>
+      </header>
 
-      {/* Upload Zone */}
+      {/* Upload Section */}
       <div className="upload-zone">
         <input 
           type="file" 
           multiple 
-          // Updated accept attribute for universal support
           accept=".CR3, .CR2, .NEF, .ARW, .DNG, .RAF, .ORF, .RW2, .PEF, .SRW" 
           onChange={handleFileChange} 
           className="file-input"
         />
-        <span className="upload-icon">☁️</span>
-        <p>
-          {selectedFiles.length > 0 
-            ? `Selected ${selectedFiles.length} files` 
-            : "Drag & drop RAW files here, or click to upload"}
-        </p>
+        <div className="upload-content">
+          <span className="upload-icon">⚡</span>
+          <p className="upload-text">
+            {selectedFiles.length > 0 
+              ? <span>Selected {selectedFiles.length} RAW files</span> 
+              : "Drop files here or click to browse"}
+          </p>
+        </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* Controls */}
       <div className="action-area">
         <button 
           className="btn btn-primary"
           onClick={handleConvert} 
           disabled={selectedFiles.length === 0 || status.includes("Processing")}
         >
-          {status.includes("Processing") ? "Converting..." : "🚀 Start Conversion"}
+          {status.includes("Processing") ? "PROCESSING..." : "START CONVERSION"}
         </button>
 
         {convertedImages.length > 0 && (
-          <button className="btn btn-warning" onClick={downloadAll}>
-            📦 Download ZIP
+          <button className="btn btn-secondary" onClick={downloadAll}>
+            DOWNLOAD ALL (ZIP)
           </button>
         )}
       </div>
 
-      {/* Status Message */}
-      <p className={`status-text ${status === "Done!" ? "status-done" : ""}`}>
-        {status === "Idle" ? "" : status}
-      </p>
+      {/* Status Bar */}
+      <div className="status-bar">
+        <span className={`status-text ${status === "Done!" ? "status-success" : ""}`}>
+          {status === "Idle" ? "" : status}
+        </span>
+      </div>
 
       {/* Results Grid */}
       <div className="image-grid">
         {convertedImages.map((img, index) => (
           <div key={index} className="image-card">
             <img src={img.url} alt="Result" className="preview-img" />
-            <div className="file-name">{img.newName}</div>
-            
-            <a href={img.url} download={img.newName} style={{textDecoration: 'none'}}>
-              <button className="btn btn-success" style={{width: '100%', fontSize: '0.8rem', padding: '8px'}}>
-                ⬇ Save
-              </button>
-            </a>
+            <div className="card-info">
+              <div className="file-name">{img.newName}</div>
+              <a href={img.url} download={img.newName} style={{textDecoration: 'none'}}>
+                <button className="btn-download-mini">SAVE JPEG</button>
+              </a>
+            </div>
           </div>
         ))}
       </div>
+
     </div>
   );
 }

@@ -1,228 +1,222 @@
-/* App.css - Mobile Responsive + Desktop Hover Fixed */
+/* App.css - Sharp Modern Dark Theme */
 
-/* 1. Global Reset & Background */
+/* 1. Global Reset & Dark Theme */
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #0f1115; /* Deep matte black/blue */
+  color: #e2e8f0; /* Off-white text for readability */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #2d3748;
 }
 
-/* 2. Main Card Container */
+/* 2. Main Container (The "Card") */
 .app-container {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2.5rem 3rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 800px;
-  text-align: center;
-  margin: 20px;
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem;
   box-sizing: border-box;
 }
 
+/* 3. Header Styling */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
 h1 {
-  color: #4a5568;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
-  line-height: 1.2;
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(90deg, #fff 0%, #94a3b8 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
 }
 
 .subtitle {
-  color: #718096;
-  margin-bottom: 2rem;
+  color: #64748b;
   font-size: 1.1rem;
+  margin-top: 0.5rem;
+  font-weight: 400;
 }
 
-/* 3. The Upload Box */
+/* 4. The Upload Zone (Sharp & Technical) */
 .upload-zone {
-  border: 3px dashed #cbd5e0;
+  background: #161b22;
+  border: 2px dashed #30363d;
   border-radius: 12px;
-  padding: 40px;
-  background-color: #f7fafc;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  padding: 4rem 2rem;
+  text-align: center;
+  transition: all 0.2s ease;
   position: relative;
-  -webkit-tap-highlight-color: transparent; 
-}
-
-/* --- RESTORED HOVER EFFECT (Desktop Only) --- */
-@media (hover: hover) {
-  .upload-zone:hover {
-    border-color: #667eea;
-    background-color: #ebf4ff;
-    transform: scale(1.01); /* Subtle pop effect */
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-  }
-}
-
-.upload-zone:active {
-  background-color: #e2e8f0;
-  transform: scale(0.98);
+  cursor: pointer;
+  margin-bottom: 2rem;
 }
 
 .file-input {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   opacity: 0;
   cursor: pointer;
 }
 
-.upload-icon {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  display: block;
+/* Desktop Hover Effect */
+@media (hover: hover) {
+  .upload-zone:hover {
+    border-color: #58a6ff;
+    background: #1c2128;
+    box-shadow: 0 0 20px rgba(88, 166, 255, 0.15);
+  }
 }
 
-/* 4. Buttons */
+.upload-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+  color: #58a6ff; /* Pro Blue */
+}
+
+.upload-text {
+  color: #8b949e;
+  font-size: 1rem;
+}
+
+.upload-text span {
+  color: #c9d1d9;
+  font-weight: 600;
+}
+
+/* 5. Buttons (Sharp & Rectangular) */
 .action-area {
-  margin-top: 2rem;
   display: flex;
   justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap; 
+  gap: 16px;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
 }
 
 .btn {
-  padding: 14px 28px;
+  padding: 14px 32px;
   border: none;
-  border-radius: 50px;
-  font-size: 1rem;
+  border-radius: 6px; /* Sharper corners */
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  min-width: 160px;
-}
-
-.btn:hover {
-  transform: translateY(-2px); /* Slight lift on hover */
-}
-
-.btn:active {
-  transform: scale(0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-primary {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: #238636; /* GitHub/Pro Green */
   color: white;
-  box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2); /* Subtle 3D effect */
+}
+
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .btn-primary:disabled {
-  background: #cbd5e0;
-  cursor: not-allowed;
+  background: #21262d;
+  color: #484f58;
   box-shadow: none;
-  transform: none;
+  cursor: not-allowed;
 }
 
-.btn-warning {
-  background: #ecc94b;
-  color: #744210;
-}
-
-.btn-success {
-  background: #48bb78;
+.btn-secondary {
+  background: #1f6feb; /* Pro Blue */
   color: white;
 }
 
-/* 5. Status Text */
+/* 6. Status Bar */
+.status-bar {
+  text-align: center;
+  margin-bottom: 2rem;
+  height: 20px; /* Prevent layout jump */
+}
 .status-text {
-  margin-top: 1.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
+  color: #8b949e;
 }
+.status-success { color: #3fb950; }
 
-.status-done {
-  color: #48bb78;
-}
-
-/* 6. Results Grid */
+/* 7. Image Grid (Bento Style) */
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 15px;
-  margin-top: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
 }
 
 .image-card {
-  background: white;
-  padding: 10px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  overflow: hidden;
   transition: transform 0.2s;
 }
 
 .image-card:hover {
-  transform: translateY(-5px);
+  border-color: #8b949e;
+  transform: translateY(-4px);
 }
 
 .preview-img {
   width: 100%;
-  height: 120px;
+  height: 140px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  background: #0d1117;
+}
+
+.card-info {
+  padding: 12px;
+  text-align: left;
 }
 
 .file-name {
   font-size: 0.8rem;
-  color: #4a5568;
+  color: #c9d1d9;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: 8px;
 }
 
-/* --- 📱 MOBILE RESPONSIVE TWEAKS --- */
+.btn-download-mini {
+  width: 100%;
+  padding: 8px;
+  background: #21262d;
+  color: #58a6ff;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-download-mini:hover {
+  background: #58a6ff;
+  color: white;
+  border-color: #58a6ff;
+}
+
+/* Mobile Tweaks */
 @media (max-width: 600px) {
-  body {
-    align-items: flex-start; 
-    padding-top: 20px;
-    padding-bottom: 20px;
-  }
-
-  .app-container {
-    padding: 1.5rem;
-    width: 92%;
-    margin: 10px auto;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-  
-  .subtitle {
-    font-size: 0.95rem;
-  }
-
-  .action-area {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 16px;
-  }
-
-  .upload-zone {
-    padding: 30px 20px;
-  }
-
-  .image-grid {
-    grid-template-columns: 1fr 1fr; 
-    gap: 10px;
-  }
+  h1 { font-size: 2rem; }
+  .app-container { padding: 1rem; }
+  .upload-zone { padding: 2rem 1rem; }
+  .action-area { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+  .image-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
 }
