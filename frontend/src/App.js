@@ -32,7 +32,7 @@ function App() {
       try {
         setStatus(`Processing ${i + 1}/${selectedFiles.length}: ${file.name}...`);
         
-        const response = await fetch("https://YOUR-RENDER-URL.onrender.com/convert", {
+        const response = await fetch("https://universal-raw-to-jpeg-convertor-api.onrender.com", {
           method: "POST",
           body: formData,
         });
