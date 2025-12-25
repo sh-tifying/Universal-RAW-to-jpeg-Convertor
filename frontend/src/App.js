@@ -2,45 +2,42 @@ import React, { useState } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import './App.css'; 
-import ParticlesBackground from './ParticlesBackground'; // Ensure this file exists!
+import ParticlesBackground from './ParticlesBackground'; 
 
 function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedImages, setConvertedImages] = useState([]);
   const [status, setStatus] = useState("Idle");
+  const [progress, setProgress] = useState(0);
 
-  // ---------------------------------------------------------
-  // 🔴 IMPORTANT: Update this URL to your Render backend
-  // If running locally, use: "http://127.0.0.1:5000/convert"
-  // ---------------------------------------------------------
+  // 🔴 CHECK YOUR RENDER URL
   const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert"; 
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFiles(Array.from(event.target.files));
-      setConvertedImages([]);
+      setConvertedImages([]); // Clear old results
       setStatus("Idle");
+      setProgress(0);
     }
   };
 
   const handleConvert = async () => {
     if (selectedFiles.length === 0) return;
 
-    setStatus("Processing...");
-    const newConvertedImages = [];
+    setStatus("Processing");
+    setProgress(0);
+    setConvertedImages([]); // Ensure gallery is empty before starting
+    
     let errorCount = 0;
 
+    // Loop through each file one by one
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
       const formData = new FormData();
       formData.append("file", file);
 
       try {
-        setStatus(`Processing ${i + 1} of ${selectedFiles.length}...`);
-        
-        // Debug check (remove later if needed)
-        // alert(`Sending to: ${API_URL}`); 
-
         const response = await fetch(API_URL, {
           method: "POST",
           body: formData,
@@ -51,28 +48,35 @@ function App() {
           const url = window.URL.createObjectURL(blob);
           const newName = file.name.substring(0, file.name.lastIndexOf('.')) + ".jpg";
 
-          newConvertedImages.push({
+          const newImageObj = {
             originalName: file.name,
             newName: newName,
             url: url,
             data: blob 
-          });
+          };
+
+          // ⚡ REAL-TIME UPDATE: Add the new image immediately!
+          setConvertedImages(prevImages => [...prevImages, newImageObj]);
+
         } else {
-          console.error(`Server Error on file ${file.name}: ${response.statusText}`);
+          console.error(`Server Error on file ${file.name}`);
           errorCount++;
         }
       } catch (error) {
         console.error(`Connection Error on file ${file.name}:`, error);
         errorCount++;
       }
+
+      // Update Progress Bar immediately after this specific file is done
+      const currentPercent = Math.round(((i + 1) / selectedFiles.length) * 100);
+      setProgress(currentPercent);
     }
 
-    setConvertedImages(newConvertedImages);
-    
-    if (errorCount > 0 && newConvertedImages.length === 0) {
+    // Final Status Update
+    if (errorCount > 0 && selectedFiles.length === errorCount) {
       setStatus(`Failed: Server error on all ${errorCount} files.`);
     } else if (errorCount > 0) {
-      setStatus(`Completed with ${errorCount} errors.`);
+      setStatus(`Done! (${errorCount} errors)`);
     } else {
       setStatus("Done!");
     }
@@ -90,19 +94,15 @@ function App() {
 
   return (
     <>
-      {/* 1. The Interactive Background */}
       <ParticlesBackground />
 
-      {/* 2. The Main App Content */}
       <div className="app-container">
         
-        {/* Header Section */}
         <header className="header">
           <h1>RAW to JPEG</h1>
           <p className="subtitle">Universal High-Speed Converter</p>
         </header>
 
-        {/* Upload Section */}
         <div className="upload-zone">
           <input 
             type="file" 
@@ -121,14 +121,31 @@ function App() {
           </div>
         </div>
 
-        {/* Controls */}
+        {/* PROGRESS BAR: Shows during processing OR when done */}
+        {(status === "Processing" || progress > 0) && (
+          <div className="progress-container">
+            <div className="progress-info">
+              <span>
+                {progress === 100 ? "Complete" : `Converting ${convertedImages.length + 1}/${selectedFiles.length}...`}
+              </span>
+              <span>{progress}%</span>
+            </div>
+            <div className="progress-track">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
         <div className="action-area">
           <button 
             className="btn btn-primary"
             onClick={handleConvert} 
-            disabled={selectedFiles.length === 0 || status.includes("Processing")}
+            disabled={selectedFiles.length === 0 || status === "Processing"}
           >
-            {status.includes("Processing") ? "PROCESSING..." : "START CONVERSION"}
+            {status === "Processing" ? "PROCESSING..." : "START CONVERSION"}
           </button>
 
           {convertedImages.length > 0 && (
@@ -138,14 +155,12 @@ function App() {
           )}
         </div>
 
-        {/* Status Bar */}
         <div className="status-bar">
-          <span className={`status-text ${status === "Done!" ? "status-success" : ""}`}>
-            {status === "Idle" ? "" : status}
+          <span className={`status-text ${status.includes("Done") ? "status-success" : ""}`}>
+            {status === "Idle" || status === "Processing" ? "" : status}
           </span>
         </div>
 
-        {/* Results Grid */}
         <div className="image-grid">
           {convertedImages.map((img, index) => (
             <div key={index} className="image-card">
