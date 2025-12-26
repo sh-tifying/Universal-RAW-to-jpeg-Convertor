@@ -18,7 +18,8 @@ function App() {
   const fileInputRef = useRef(null);
 
   // 🟢 URL SETTING (Points to local Python backend)
-  const API_URL = "http://127.0.0.1:5000/convert"; 
+  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
+  //const API_URL = "http://127.0.0.1:5000/convert"; 
 
   useEffect(() => { document.body.className = theme; }, [theme]);
   const toggleTheme = () => setTheme(curr => curr === 'dark' ? 'light' : 'dark');
