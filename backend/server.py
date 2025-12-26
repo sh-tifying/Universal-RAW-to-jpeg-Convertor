@@ -1,15 +1,20 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, Response
 from flask_cors import CORS
 import rawpy
+import imageio
 import io
 import os
 import gc
+import tempfile
 
 app = Flask(__name__)
-CORS(app)
+# Expose headers so the frontend can read the EXIF data
+CORS(app, expose_headers=["X-Exif-Camera", "X-Exif-ISO", "X-Exif-Shutter", "X-Exif-Aperture"])
 
-# Increase Flask's internal limit to 200MB just to be safe
-app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024 
+SUPPORTED_EXTENSIONS = {'.cr2', '.cr3', '.nef', '.arw', '.dng', '.raf', '.orf', '.rw2', '.pef', '.srw'}
+
+def is_raw_file(filename):
+    return os.path.splitext(filename)[1].lower() in SUPPORTED_EXTENSIONS
 
 @app.route('/convert', methods=['POST'])
 def convert_image():
@@ -17,42 +22,58 @@ def convert_image():
         return "No file part", 400
     
     file = request.files['file']
+    # 7. READ QUALITY SETTING (Default to 90 if missing)
+    quality = int(request.form.get('quality', 90))
+    
     if file.filename == '':
         return "No selected file", 400
 
+    temp_path = None
     try:
-        print(f"Processing: {file.filename}")
+        # Save to disk temporarily
+        file_ext = os.path.splitext(file.filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as temp:
+            file.save(temp.name)
+            temp_path = temp.name
         
-        # Read file into memory (This is the only RAM usage)
-        file_bytes = file.read()
-        
-        # Open the RAW container
-        with rawpy.imread(io.BytesIO(file_bytes)) as raw:
-            
-            # Try to grab the embedded JPEG
+        with rawpy.imread(temp_path) as raw:
+            # 2. EXTRACT EXIF DATA
+            # rawpy usually detects the camera model
             try:
-                thumb = raw.extract_thumb()
-            except Exception as e:
-                # If we can't find a thumb, we ABORT. 
-                # We do not try to convert, because that crashes the free server.
-                print(f"Error extracting thumbnail: {e}")
-                return "This RAW file does not have a compatible preview image.", 400
+                camera_model = raw.model.decode('utf-8') if raw.model else "Unknown"
+            except:
+                camera_model = "Unknown"
 
-            if thumb.format == rawpy.ThumbFormat.JPEG:
-                print("Success: Extracted Embedded JPEG")
-                return send_file(
-                    io.BytesIO(thumb.data),
-                    mimetype='image/jpeg',
-                    as_attachment=True,
-                    download_name=f"{os.path.splitext(file.filename)[0]}.jpg"
-                )
-            else:
-                return "Embedded preview is not a JPEG.", 400
+            # Processing
+            rgb = raw.postprocess(
+                use_camera_wb=True, 
+                bright=1.0, 
+                user_sat=None,
+                half_size=True 
+            )
+            
+            img_io = io.BytesIO()
+            imageio.imsave(img_io, rgb, format='jpeg', quality=quality)
+            img_io.seek(0)
+            
+            del rgb
+            del raw
+            gc.collect()
+
+            # Create response with EXIF Headers
+            response = send_file(img_io, mimetype='image/jpeg', as_attachment=True, download_name='converted.jpg')
+            response.headers["X-Exif-Camera"] = camera_model
+            # Note: Extracting full EXIF like ISO/Shutter from rawpy is complex; 
+            # we will send Camera Model for now as proof of concept.
+            return response
 
     except Exception as e:
-        print(f"CRASH ERROR: {e}")
-        return f"Server Error: {str(e)}", 500
+        print(f"ERROR: {e}")
+        return str(e), 500
+        
     finally:
+        if temp_path and os.path.exists(temp_path):
+            os.remove(temp_path)
         gc.collect()
 
 if __name__ == '__main__':

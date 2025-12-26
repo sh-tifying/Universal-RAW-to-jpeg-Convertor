@@ -1,294 +1,131 @@
-/* App.css - Neon Glassmorphism with Particle Support */
+/* App.css - Full Feature Set */
 
-/* 1. Global Reset */
+/* 1. Global & Themes */
+body.dark {
+  background-color: #0b0d11;
+  color: #e2e8f0;
+}
+body.light {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
 body {
   margin: 0;
-  padding: 0;
-  /* CHANGE THIS LINE: Force a dark color so it's never white */
-  background-color: #0b0d11; 
-  color: #e2e8f0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow-x: hidden;
+  transition: background-color 0.3s ease;
+  font-family: 'Inter', sans-serif;
 }
 
-/* 2. Main Container */
-.app-container {
-  width: 100%;
-  max-width: 900px;
-  padding: 2rem;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 1; /* Ensures content sits ABOVE the background stars */
-}
-
-/* 3. Header Styling */
-.header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-h1 {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin: 0;
-  /* VIBRANT GRADIENT TEXT */
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
-  -webkit-background-clip: text; /* Vendor prefix for Chrome/Safari */
-  background-clip: text;         /* Standard property */
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -1px;
-  filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.3)); /* Glow effect */
-}
-
-.subtitle {
-  color: #94a3b8;
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
-  font-weight: 400;
-}
-
-/* 4. The Upload Zone (Glassmorphism) */
-.upload-zone {
-  /* Semi-transparent background to let stars show through */
-  background: rgba(15, 23, 42, 0.6); 
-  backdrop-filter: blur(12px); /* Blurs the stars behind it slightly for readability */
-  -webkit-backdrop-filter: blur(12px); /* Safari support */
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 24px;
-  padding: 4rem 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  position: relative;
-  cursor: pointer;
-  margin-bottom: 2rem;
-  overflow: hidden;
-}
-
-.file-input {
-  position: absolute;
+/* 2. Drag Overlay (#5) */
+.drag-overlay {
+  position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 10;
-}
-
-/* Hover Effect */
-@media (hover: hover) {
-  .upload-zone:hover {
-    border-color: #8b5cf6;
-    background: rgba(15, 23, 42, 0.8);
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
-    transform: scale(1.01);
-  }
-}
-
-.upload-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  display: block;
-  /* Icon Gradient */
-  background: linear-gradient(135deg, #60a5fa, #f472b6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.upload-text {
-  color: #94a3b8;
-  font-size: 1rem;
-}
-
-.upload-text span {
-  color: #e2e8f0;
-  font-weight: 600;
-}
-
-/* 5. Buttons */
-.action-area {
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 999;
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 3rem;
+  align-items: center;
+  color: white;
+  pointer-events: none; /* Let the drop event pass through */
+}
+
+/* 3. Theme Toggle (#8) */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: 2px solid rgba(128,128,128,0.3);
+  font-size: 1.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  z-index: 100;
+  transition: all 0.2s;
+}
+.theme-toggle:hover { background: rgba(128,128,128,0.1); transform: scale(1.1); }
+
+/* 4. Controls Row */
+.controls-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
-.btn {
-  padding: 14px 36px;
-  border: none;
+/* Quality Selector (#7) */
+.quality-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.5);
+  padding: 10px 20px;
   border-radius: 50px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
-
-/* Primary Button: VIBRANT GRADIENT */
-.btn-primary {
-  background: linear-gradient(90deg, #4f46e5 0%, #ec4899 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
-}
-
-.btn-primary:disabled {
-  background: #334155;
-  color: #64748b;
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Secondary Button */
-.btn-secondary {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid #4f46e5;
-  color: #818cf8;
-  backdrop-filter: blur(4px);
-}
-
-.btn-secondary:hover {
-  background: rgba(79, 70, 229, 0.2);
-  color: white;
-  box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
-}
-
-/* 6. Status Bar */
-.status-bar {
-  text-align: center;
-  margin-bottom: 2rem;
-  height: 24px;
-}
-.status-text {
+.quality-selector select {
+  background: transparent;
+  color: inherit;
+  border: none;
   font-size: 1rem;
-  font-weight: 500;
-  color: #94a3b8;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
 }
-.status-success { 
-  color: #34d399; 
-  text-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
-}
+/* Light Mode Tweaks */
+body.light .quality-selector { background: #e2e8f0; border-color: #cbd5e1; }
 
-/* 7. Image Grid */
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+/* 5. Buttons & Upload (Existing styles adapted) */
+.app-container { max-width: 900px; padding: 2rem; margin: 0 auto; position: relative; z-index: 1; }
+.header { text-align: center; margin-bottom: 3rem; }
+h1 { 
+  font-size: 3.5rem; margin: 0;
+  background: linear-gradient(135deg, #60a5fa, #f472b6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
+.upload-zone {
+  background: rgba(30, 41, 59, 0.3);
+  border: 2px dashed #475569;
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  position: relative;
+  margin-bottom: 2rem;
+}
+.file-input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor: pointer;}
 
+.btn { padding: 12px 30px; border-radius: 50px; border:none; font-weight:bold; cursor:pointer; }
+.btn-primary { background: linear-gradient(90deg, #4f46e5, #ec4899); color: white; }
+.btn-secondary { background: transparent; border: 2px solid #4f46e5; color: #818cf8; }
+
+/* 6. Image Card & Slider (#1 & #2) */
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
 .image-card {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(30, 41, 59, 0.5);
   border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.image-card:hover {
-  border-color: #6366f1;
-  transform: translateY(-6px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  z-index: 2;
-}
-
-.preview-img {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  background: #0f172a;
-}
-
-.card-info {
-  padding: 16px;
-  text-align: left;
-}
-
-.file-name {
-  font-size: 0.85rem;
-  color: #cbd5e1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 12px;
-}
-
-.btn-download-mini {
-  width: 100%;
-  padding: 10px;
-  background: rgba(15, 23, 42, 0.5);
-  color: #60a5fa;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 700;
-  transition: all 0.2s;
-  text-transform: uppercase;
-}
-
-.btn-download-mini:hover {
-  background: #60a5fa;
-  color: #0f172a;
-  border-color: #60a5fa;
-  box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
-}
-
-/* Mobile Tweaks */
-@media (max-width: 600px) {
-  h1 { font-size: 2.5rem; }
-  .app-container { padding: 1.5rem; }
-  .upload-zone { padding: 3rem 1.5rem; }
-  .action-area { flex-direction: column; gap: 12px; }
-  .btn { width: 100%; justify-content: center; padding: 16px; }
-  .image-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-}
-/* ... existing code ... */
-
-/* 8. Progress Bar (Neon Style) */
-.progress-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
-}
-
-.progress-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-  color: #94a3b8;
-  font-weight: 600;
-}
-
-.progress-track {
-  width: 100%;
-  height: 10px;
-  background: rgba(30, 41, 59, 0.5); /* Dark track */
-  border-radius: 20px;
-  overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
+body.light .image-card { background: white; border-color: #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #60a5fa, #ec4899); /* Blue to Pink Gradient */
-  border-radius: 20px;
-  transition: width 0.4s ease-out; /* Smooth animation */
-  box-shadow: 0 0 15px rgba(236, 72, 153, 0.5); /* Neon Glow */
+.slider-container { height: 200px; position: relative; } /* Taller for slider */
+.slider-label {
+  position: absolute; bottom: 10px; left: 10px;
+  background: rgba(0,0,0,0.6); color: white;
+  padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; pointer-events: none;
 }
+
+.card-info { padding: 15px; }
+.file-name { font-size: 0.9rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exif-badge { 
+  font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px; 
+  background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; display: inline-block;
+}
+.btn-download-mini { width: 100%; padding: 8px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; }
+
+/* 7. Progress */
+.progress-container { width: 100%; height: 6px; background: #334155; margin-bottom: 2rem; border-radius: 10px; overflow:hidden;}
+.progress-fill { height: 100%; background: #34d399; transition: width 0.3s; }
