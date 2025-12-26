@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import toast, { Toaster } from 'react-hot-toast'; 
@@ -9,15 +9,21 @@ function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedImages, setConvertedImages] = useState([]);
   const [progress, setProgress] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false); 
   const [quality, setQuality] = useState(90); 
   const [theme, setTheme] = useState('dark'); 
-  //const API_URL = "https://your-production-api.com/convert";
+  
+  // 🟢 PERMANENT REF (Fixes the "click is null" error)
+  const fileInputRef = useRef(null);
+
+  // 🟢 URL SETTING (Points to local Python backend)
   const API_URL = "http://127.0.0.1:5000/convert"; 
 
   useEffect(() => { document.body.className = theme; }, [theme]);
   const toggleTheme = () => setTheme(curr => curr === 'dark' ? 'light' : 'dark');
 
+  // Drag & Drop Handlers
   const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
   const handleDrop = (e) => {
@@ -27,20 +33,38 @@ function App() {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) handleFiles(e.target.files);
+    e.target.value = ''; // Reset so same file can be selected again
   };
 
   const handleFiles = (files) => {
-    setSelectedFiles(Array.from(files));
+    const newFiles = Array.from(files);
+    setSelectedFiles(prev => [...prev, ...newFiles]);
+    setProgress(0);
+    toast.success(`Added ${newFiles.length} files!`, { icon: 'Hz' });
+  };
+
+  const removeFile = (indexToRemove) => {
+    setSelectedFiles(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleStartFresh = () => {
+    setSelectedFiles([]);
     setConvertedImages([]);
     setProgress(0);
-    toast.success(`Selected ${files.length} files!`, { icon: '📁' });
+    toast('Started a new batch', { icon: '✨' });
+  };
+
+  // Safe trigger for the hidden input
+  const triggerFileUpload = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
   const handleConvert = async () => {
     if (selectedFiles.length === 0) return;
-    const toastId = toast.loading('Starting conversion...');
+    
+    setIsProcessing(true);
+    const toastId = toast.loading('Converting batch...');
     setProgress(0);
-    setConvertedImages([]);
     
     let errorCount = 0;
 
@@ -56,21 +80,27 @@ function App() {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
           const newName = file.name.substring(0, file.name.lastIndexOf('.')) + ".jpg";
-          const cameraModel = response.headers.get("X-Exif-Camera") || response.headers.get("x-exif-camera") || "Unknown Camera";
+          
+          // robust header extraction
+          const cameraModel = response.headers.get("X-Exif-Camera") || "Unknown Camera";
 
           setConvertedImages(prev => [...prev, {
             originalName: file.name, newName, url, data: blob, exif: { camera: cameraModel }
           }]);
-          toast.success(`${newName} ready!`, { id: toastId }); 
         } else {
           errorCount++;
           toast.error(`Failed: ${file.name}`);
         }
       } catch (error) { console.error(error); errorCount++; }
+      
       setProgress(Math.round(((i + 1) / selectedFiles.length) * 100));
     }
+
+    setIsProcessing(false);
+    setSelectedFiles([]); // Clear queue
     toast.dismiss(toastId);
-    if (errorCount === 0) toast.success("Done! 🎉");
+    if (errorCount === 0) toast.success("Batch Complete!");
+    else toast.error(`Done with ${errorCount} errors.`);
   };
 
   const downloadAll = () => {
@@ -79,28 +109,72 @@ function App() {
     zip.generateAsync({ type: "blob" }).then((content) => saveAs(content, "converted_photos.zip"));
   };
 
+  // 🟢 DYNAMIC LAYOUT CALCULATOR
+  const getGridClass = () => {
+    const count = convertedImages.length;
+    if (count === 1) return 'grid-single';      // Showcase Mode
+    if (count <= 4) return 'grid-few';          // Gallery Mode
+    if (count <= 12) return 'grid-standard';    // Standard Grid
+    return 'grid-dense';                        // Contact Sheet
+  };
+
+  const hasQueue = selectedFiles.length > 0;
+
   return (
     <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} style={{minHeight: '100vh'}}>
       <Toaster position="top-right" /> 
       <ParticlesBackground />
-      {isDragging && <div className="drag-overlay"><h1>📂 Drop files to start!</h1></div>}
+      {isDragging && <div className="drag-overlay"><h1>📂 Drop to Add Files</h1></div>}
       
       <button className="theme-toggle" onClick={toggleTheme}>{theme === 'dark' ? '☀️' : '🌙'}</button>
 
       <div className="app-container">
+        
+        {/* PERMANENT HIDDEN INPUT */}
+        <input 
+          type="file" 
+          multiple 
+          accept=".CR3,.CR2,.NEF,.ARW,.DNG,.RAF,.ORF,.RW2" 
+          onChange={handleFileChange} 
+          style={{ display: 'none' }} 
+          ref={fileInputRef} 
+        />
+
         <header className="header">
           <h1>RAW to JPEG</h1>
           <p className="subtitle">Pro Converter Suite</p>
         </header>
 
-        <div className="upload-zone">
-          <input type="file" multiple accept=".CR3,.CR2,.NEF,.ARW,.DNG,.RAF,.ORF,.RW2" onChange={handleFileChange} className="file-input"/>
-          <div className="upload-content">
-            <span className="upload-icon">⚡</span>
-            <p className="upload-text">{selectedFiles.length > 0 ? `Selected ${selectedFiles.length} files` : "Drag & Drop or Click"}</p>
+        {/* 1. UPLOAD ZONE */}
+        {!hasQueue && convertedImages.length === 0 && (
+          <div className="upload-zone" onClick={triggerFileUpload}>
+            <div className="upload-content">
+              <span className="upload-icon">⚡</span>
+              <p className="upload-text">Drag & Drop or Click to Start</p>
+            </div>
           </div>
-        </div>
+        )}
 
+        {/* 2. PENDING LIST */}
+        {hasQueue && !isProcessing && (
+          <div className="pending-list-container">
+            <div className="list-header">
+              <h3>Pending Files ({selectedFiles.length})</h3>
+              <button className="btn-text" onClick={triggerFileUpload}>+ Add More</button>
+            </div>
+            <div className="file-list">
+              {selectedFiles.map((file, index) => (
+                <div key={index} className="file-item">
+                  <span className="file-item-name">{file.name}</span>
+                  <span className="file-item-size">{(file.size / 1024 / 1024).toFixed(1)} MB</span>
+                  <button className="btn-remove" onClick={() => removeFile(index)}>❌</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 3. CONTROLS */}
         <div className="controls-row">
           <div className="quality-selector">
             <label>Quality:</label>
@@ -110,13 +184,30 @@ function App() {
               <option value="75">Web</option>
             </select>
           </div>
-          <button className="btn btn-primary" onClick={handleConvert} disabled={selectedFiles.length === 0}>START CONVERSION</button>
-          {convertedImages.length > 0 && <button className="btn btn-secondary" onClick={downloadAll}>DOWNLOAD ZIP</button>}
+
+          {hasQueue && !isProcessing && (
+             <button className="btn btn-primary" onClick={handleConvert}>CONVERT {selectedFiles.length} FILES</button>
+          )}
+
+          {isProcessing && <button className="btn btn-primary" disabled>PROCESSING...</button>}
         </div>
 
-        {progress > 0 && progress < 100 && <div className="progress-container"><div className="progress-fill" style={{ width: `${progress}%` }}></div></div>}
+        {/* 4. PROGRESS */}
+        {(progress > 0 && progress < 100) || isProcessing ? (
+          <div className="progress-container"><div className="progress-fill" style={{ width: `${progress}%` }}></div></div>
+        ) : null}
 
-        <div className="image-grid">
+        {/* 5. DONE ACTIONS */}
+        {!hasQueue && convertedImages.length > 0 && (
+            <div className="done-actions">
+              <button className="btn btn-secondary" onClick={triggerFileUpload}>➕ ADD MORE</button>
+              <button className="btn btn-primary" onClick={downloadAll}>⬇️ DOWNLOAD ZIP</button>
+              <button className="btn btn-danger" onClick={handleStartFresh}>🔄 NEW BATCH</button>
+            </div>
+        )}
+
+        {/* 6. DYNAMIC GRID */}
+        <div className={`image-grid ${getGridClass()}`}>
           {convertedImages.map((img, index) => (
             <ImageCard key={index} img={img} />
           ))}
@@ -126,35 +217,24 @@ function App() {
   );
 }
 
-// --------------------------------------------------------
-// 🖼️ NEW SUB-COMPONENT: Individual Image Card
-// --------------------------------------------------------
+// 🖼️ IMAGE CARD COMPONENT
 function ImageCard({ img }) {
   const [showRaw, setShowRaw] = useState(false);
-
   return (
     <div className="image-card">
       <div className="image-wrapper">
-        {/* The Image (Normal or Raw Filter applied via CSS) */}
-        <img 
-          src={img.url} 
-          alt="Result" 
-          className={`preview-img ${showRaw ? 'raw-mode' : ''}`}
-        />
-        
-        {/* The Toggle Switch (Hold to View) */}
+        <img src={img.url} alt="Result" className={`preview-img ${showRaw ? 'raw-mode' : ''}`}/>
         <button 
           className="raw-toggle-btn"
           onMouseDown={() => setShowRaw(true)}
           onMouseUp={() => setShowRaw(false)}
           onMouseLeave={() => setShowRaw(false)}
-          onTouchStart={() => setShowRaw(true)} // Mobile support
+          onTouchStart={() => setShowRaw(true)} 
           onTouchEnd={() => setShowRaw(false)}
         >
           {showRaw ? 'RAW' : 'JPEG'}
         </button>
       </div>
-
       <div className="card-info">
         <div className="file-name">{img.newName}</div>
         <div className="exif-badge">📷 {img.exif.camera}</div>
