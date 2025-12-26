@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import toast, { Toaster } from 'react-hot-toast'; // #4 Toast Notifications
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'; // #1 Slider
+import toast, { Toaster } from 'react-hot-toast'; 
 import './App.css'; 
 import ParticlesBackground from './ParticlesBackground'; 
 
@@ -10,47 +9,24 @@ function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedImages, setConvertedImages] = useState([]);
   const [progress, setProgress] = useState(0);
-  const [isDragging, setIsDragging] = useState(false); // #5 Drag Overlay
-  
-  // Settings State
-  const [quality, setQuality] = useState(90); // #7 Quality
-  const [theme, setTheme] = useState('dark'); // #8 Theme
+  const [isDragging, setIsDragging] = useState(false); 
+  const [quality, setQuality] = useState(90); 
+  const [theme, setTheme] = useState('dark'); 
+  //const API_URL = "https://your-production-api.com/convert";
+  const API_URL = "http://127.0.0.1:5000/convert"; 
 
-  // 🔴 YOUR URL HERE
-  const API_URL = "https://YOUR-APP-NAME.onrender.com/convert"; 
+  useEffect(() => { document.body.className = theme; }, [theme]);
+  const toggleTheme = () => setTheme(curr => curr === 'dark' ? 'light' : 'dark');
 
-  // #8 Theme Toggle Logic
-  useEffect(() => {
-    document.body.className = theme; // Applies 'dark' or 'light' class to body
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(curr => curr === 'dark' ? 'light' : 'dark');
-  };
-
-  // #5 Drag & Drop Logic
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-  
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-  
+  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
   const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
-    }
+    e.preventDefault(); setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
   };
 
-  const handleFileChange = (event) => {
-    if (event.target.files && event.target.files.length > 0) {
-      handleFiles(event.target.files);
-    }
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) handleFiles(e.target.files);
   };
 
   const handleFiles = (files) => {
@@ -62,7 +38,6 @@ function App() {
 
   const handleConvert = async () => {
     if (selectedFiles.length === 0) return;
-
     const toastId = toast.loading('Starting conversion...');
     setProgress(0);
     setConvertedImages([]);
@@ -73,167 +48,119 @@ function App() {
       const file = selectedFiles[i];
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("quality", quality); // #7 Send Quality Setting
+      formData.append("quality", quality); 
 
       try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          body: formData,
-        });
-
+        const response = await fetch(API_URL, { method: "POST", body: formData });
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
           const newName = file.name.substring(0, file.name.lastIndexOf('.')) + ".jpg";
+          const cameraModel = response.headers.get("X-Exif-Camera") || response.headers.get("x-exif-camera") || "Unknown Camera";
 
-          // #2 Extract EXIF from Headers
-          const cameraModel = response.headers.get("X-Exif-Camera") || "Unknown Camera";
-
-          const newImageObj = {
-            originalName: file.name,
-            newName: newName,
-            url: url,
-            data: blob,
-            exif: { camera: cameraModel }
-          };
-
-          setConvertedImages(prev => [...prev, newImageObj]);
-          toast.success(`${newName} ready!`, { id: toastId }); // Update toast
-
+          setConvertedImages(prev => [...prev, {
+            originalName: file.name, newName, url, data: blob, exif: { camera: cameraModel }
+          }]);
+          toast.success(`${newName} ready!`, { id: toastId }); 
         } else {
           errorCount++;
           toast.error(`Failed: ${file.name}`);
         }
-      } catch (error) {
-        console.error(error);
-        errorCount++;
-      }
-
-      const currentPercent = Math.round(((i + 1) / selectedFiles.length) * 100);
-      setProgress(currentPercent);
+      } catch (error) { console.error(error); errorCount++; }
+      setProgress(Math.round(((i + 1) / selectedFiles.length) * 100));
     }
-
     toast.dismiss(toastId);
-    if (errorCount === 0) toast.success("All files converted successfully! 🎉");
-    else toast.error(`Finished with ${errorCount} errors.`);
+    if (errorCount === 0) toast.success("Done! 🎉");
   };
 
   const downloadAll = () => {
     const zip = new JSZip();
-    convertedImages.forEach((img) => {
-      zip.file(img.newName, img.data);
-    });
-    zip.generateAsync({ type: "blob" }).then((content) => {
-      saveAs(content, "converted_photos.zip");
-    });
+    convertedImages.forEach((img) => zip.file(img.newName, img.data));
+    zip.generateAsync({ type: "blob" }).then((content) => saveAs(content, "converted_photos.zip"));
   };
 
   return (
     <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} style={{minHeight: '100vh'}}>
-      <Toaster position="top-right" /> {/* #4 Toast Container */}
+      <Toaster position="top-right" /> 
       <ParticlesBackground />
-
-      {/* #5 Drag Overlay */}
-      {isDragging && (
-        <div className="drag-overlay">
-          <h1>📂 Drop files to start!</h1>
-        </div>
-      )}
-
-      {/* #8 Theme Toggle Button */}
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
+      {isDragging && <div className="drag-overlay"><h1>📂 Drop files to start!</h1></div>}
+      
+      <button className="theme-toggle" onClick={toggleTheme}>{theme === 'dark' ? '☀️' : '🌙'}</button>
 
       <div className="app-container">
-        
         <header className="header">
           <h1>RAW to JPEG</h1>
           <p className="subtitle">Pro Converter Suite</p>
         </header>
 
-        {/* Upload Zone */}
         <div className="upload-zone">
-          <input 
-            type="file" 
-            multiple 
-            accept=".CR3, .CR2, .NEF, .ARW, .DNG" 
-            onChange={handleFileChange} 
-            className="file-input"
-          />
+          <input type="file" multiple accept=".CR3,.CR2,.NEF,.ARW,.DNG,.RAF,.ORF,.RW2" onChange={handleFileChange} className="file-input"/>
           <div className="upload-content">
             <span className="upload-icon">⚡</span>
-            <p className="upload-text">
-              {selectedFiles.length > 0 
-                ? <span>Selected {selectedFiles.length} files</span> 
-                : "Drag & Drop or Click to Browse"}
-            </p>
+            <p className="upload-text">{selectedFiles.length > 0 ? `Selected ${selectedFiles.length} files` : "Drag & Drop or Click"}</p>
           </div>
         </div>
 
-        {/* Controls: Quality & Buttons */}
         <div className="controls-row">
-          
-          {/* #7 Quality Selector */}
           <div className="quality-selector">
             <label>Quality:</label>
             <select value={quality} onChange={(e) => setQuality(e.target.value)}>
-              <option value="100">Lossless (100%)</option>
-              <option value="90">High (90%)</option>
-              <option value="75">Web (75%)</option>
+              <option value="100">Lossless</option>
+              <option value="90">High</option>
+              <option value="75">Web</option>
             </select>
           </div>
-
-          <div className="action-area">
-            <button 
-              className="btn btn-primary"
-              onClick={handleConvert} 
-              disabled={selectedFiles.length === 0}
-            >
-              START CONVERSION
-            </button>
-            {convertedImages.length > 0 && (
-              <button className="btn btn-secondary" onClick={downloadAll}>
-                DOWNLOAD ZIP
-              </button>
-            )}
-          </div>
+          <button className="btn btn-primary" onClick={handleConvert} disabled={selectedFiles.length === 0}>START CONVERSION</button>
+          {convertedImages.length > 0 && <button className="btn btn-secondary" onClick={downloadAll}>DOWNLOAD ZIP</button>}
         </div>
 
-        {/* Progress Bar */}
-        {progress > 0 && progress < 100 && (
-          <div className="progress-container">
-            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-          </div>
-        )}
+        {progress > 0 && progress < 100 && <div className="progress-container"><div className="progress-fill" style={{ width: `${progress}%` }}></div></div>}
 
-        {/* Results Grid */}
         <div className="image-grid">
           {convertedImages.map((img, index) => (
-            <div key={index} className="image-card">
-              
-              {/* #1 Before/After Slider (Simulated using same img for demo) */}
-              <div className="slider-container">
-                 <ReactCompareSlider
-                  itemOne={<ReactCompareSliderImage src={img.url} alt="Original" style={{filter: 'grayscale(50%) brightness(0.8)'}} />} // Simulating 'Raw' look
-                  itemTwo={<ReactCompareSliderImage src={img.url} alt="Processed" />} 
-                />
-                <div className="slider-label">Compare (Simulated)</div>
-              </div>
-
-              <div className="card-info">
-                <div className="file-name">{img.newName}</div>
-                {/* #2 EXIF Data Display */}
-                <div className="exif-badge">📷 {img.exif.camera}</div>
-                
-                <a href={img.url} download={img.newName} style={{textDecoration: 'none'}}>
-                  <button className="btn-download-mini">SAVE JPEG</button>
-                </a>
-              </div>
-            </div>
+            <ImageCard key={index} img={img} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
 
+// --------------------------------------------------------
+// 🖼️ NEW SUB-COMPONENT: Individual Image Card
+// --------------------------------------------------------
+function ImageCard({ img }) {
+  const [showRaw, setShowRaw] = useState(false);
+
+  return (
+    <div className="image-card">
+      <div className="image-wrapper">
+        {/* The Image (Normal or Raw Filter applied via CSS) */}
+        <img 
+          src={img.url} 
+          alt="Result" 
+          className={`preview-img ${showRaw ? 'raw-mode' : ''}`}
+        />
+        
+        {/* The Toggle Switch (Hold to View) */}
+        <button 
+          className="raw-toggle-btn"
+          onMouseDown={() => setShowRaw(true)}
+          onMouseUp={() => setShowRaw(false)}
+          onMouseLeave={() => setShowRaw(false)}
+          onTouchStart={() => setShowRaw(true)} // Mobile support
+          onTouchEnd={() => setShowRaw(false)}
+        >
+          {showRaw ? 'RAW' : 'JPEG'}
+        </button>
+      </div>
+
+      <div className="card-info">
+        <div className="file-name">{img.newName}</div>
+        <div className="exif-badge">📷 {img.exif.camera}</div>
+        <a href={img.url} download={img.newName} style={{textDecoration: 'none'}}>
+          <button className="btn-download-mini">SAVE JPEG</button>
+        </a>
       </div>
     </div>
   );

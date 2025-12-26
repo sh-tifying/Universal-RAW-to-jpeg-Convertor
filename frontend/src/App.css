@@ -283,3 +283,72 @@ body.light .progress-container { background: #e2e8f0; }
   .controls-row { flex-direction: column; width: 100%; }
   .btn, .quality-selector { width: 100%; justify-content: center; }
 }
+/* Safety fix for layout */
+.image-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Fill the grid height */
+}
+
+.slider-container {
+  flex-grow: 1; /* Take up available space */
+  min-height: 200px; /* Force it to show up */
+}
+
+.card-info {
+  flex-shrink: 0; /* Don't let the text area shrink */
+  background: rgba(15, 23, 42, 0.8); /* Dark background for text legibility */
+  z-index: 10;
+}
+/* ... existing code ... */
+
+/* WRAPPER to hold image + button together */
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 250px; /* Fixed height for consistency */
+  overflow: hidden;
+  background: #000;
+}
+
+/* THE IMAGE ITSELF */
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.2s ease; /* Smooth toggle */
+}
+
+/* RAW MODE FILTER: Simulates the flat, dull look of a RAW file */
+.preview-img.raw-mode {
+  filter: grayscale(40%) contrast(85%) brightness(90%);
+}
+
+/* THE TOGGLE BUTTON (Floating on top) */
+.raw-toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 20;
+  backdrop-filter: blur(4px);
+  user-select: none; /* Prevent text selection while holding */
+  transition: all 0.2s ease;
+}
+
+.raw-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.raw-toggle-btn:active {
+  background: #ec4899; /* Pink highlight when holding */
+  transform: scale(0.95);
+  border-color: #ec4899;
+}
