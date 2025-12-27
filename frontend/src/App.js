@@ -19,7 +19,8 @@ function App() {
   const [theme, setTheme] = useState('dark'); 
   
   const fileInputRef = useRef(null);
-  const API_URL = "http://127.0.0.1:5000/convert"; 
+  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
+  //const API_URL = "http://127.0.0.1:5000/convert"; 
 
   // 🟢 ANIMATION SEQUENCE
   useEffect(() => {
