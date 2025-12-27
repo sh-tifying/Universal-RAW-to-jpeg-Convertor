@@ -1,4 +1,4 @@
-/* App.css - Compact, Full Width, Portrait Mode */
+/* App.css - Final Pro Version (All Fixes Included) */
 
 /* =========================================
    1. GLOBAL & RESET
@@ -10,44 +10,114 @@ body {
   display: flex; flex-direction: column; align-items: center;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+  width: 100%;
 }
+
 body.dark { background-color: #0f172a; color: #f1f5f9; }
 body.light { background-color: #f1f5f9; color: #1e293b; }
 
+/* 🟢 APP WRAPPER (Fade In Transition) */
+.app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Visibility states for transition */
+.app-wrapper.hidden .app-container, 
+.app-wrapper.hidden .app-footer,
+.app-wrapper.hidden .theme-toggle {
+  opacity: 0;
+}
+.app-wrapper.visible .app-container,
+.app-wrapper.visible .app-footer,
+.app-wrapper.visible .theme-toggle {
+  opacity: 1;
+}
+
+/* =========================================
+   2. MAIN CONTENT LAYOUT (Strict Centering)
+   ========================================= */
 .app-container {
   width: 100%;
-  max-width: 100%; /* Edge to Edge */
+  max-width: 1200px; /* Constrain max width for focus */
+  margin: 0 auto;    /* Center the container */
   padding: 1rem 2rem;
   box-sizing: border-box;
   position: relative;
   z-index: 10;
+  
+  display: flex;
+  flex-direction: column;
+  
+  /* 🟢 FORCE CENTER ALIGNMENT */
+  align-items: center; 
 }
 
-.header { text-align: center; margin-bottom: 2rem; margin-top: 1rem; }
-h1 {
-  font-size: 2.2rem; font-weight: 800; margin: 0;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 15px rgba(167, 139, 250, 0.4));
+.header { 
+  text-align: center; 
+  margin-bottom: 2rem; 
+  margin-top: 1rem;
+  width: 100%; 
 }
+
+/* 🟢 MAIN LOGO STYLING (Matches Loader) */
+.main-logo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: opacity 0.1s;
+}
+
+/* "Ghost" Logic: Invisible while loader is active */
+.invisible-logo {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
 .subtitle { font-size: 0.9rem; margin-top: 0.2rem; color: #94a3b8; }
 
 /* =========================================
-   2. UI COMPONENTS
+   3. UI COMPONENTS (Auto-Margin Fixes)
    ========================================= */
+
+/* 🟢 FORCE CENTER: Belt & Suspenders approach */
+.upload-zone, 
+.pending-list-container, 
+.controls-row, 
+.progress-container {
+  width: 100%;
+  max-width: 800px; /* Consistent stacking width */
+  margin-left: auto !important; 
+  margin-right: auto !important;
+}
+
 .upload-zone {
-  background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px);
-  border: 2px dashed #475569; border-radius: 16px;
-  padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer; margin-bottom: 1.5rem;
-  max-width: 800px; margin-left: auto; margin-right: auto;
+  background: rgba(30, 41, 59, 0.4); 
+  backdrop-filter: blur(12px);
+  border: 2px dashed #475569; 
+  border-radius: 16px;
+  padding: 2rem; 
+  text-align: center; 
+  transition: all 0.3s ease; 
+  cursor: pointer; 
+  margin-bottom: 1.5rem;
 }
 .upload-zone:hover { border-color: #8b5cf6; background: rgba(30, 41, 59, 0.7); }
 .upload-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 
 .pending-list-container {
-  background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;
-  max-width: 800px; margin-left: auto; margin-right: auto;
+  background: rgba(30, 41, 59, 0.4); 
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px; 
+  padding: 1rem; 
+  margin-bottom: 1.5rem;
 }
 .list-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
 .file-list { max-height: 150px; overflow-y: auto; padding-right: 5px; }
@@ -56,7 +126,15 @@ h1 {
 .btn-remove { background: none; border: none; cursor: pointer; opacity: 0.7; }
 .btn-remove:hover { opacity: 1; color: #ef4444; }
 
-.controls-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.controls-row { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  gap: 15px; 
+  margin-bottom: 1.5rem; 
+  flex-wrap: wrap; 
+}
+
 .quality-selector { background: rgba(30, 41, 59, 0.6); padding: 8px 15px; border-radius: 40px; border: 1px solid rgba(148, 163, 184, 0.2); display: flex; align-items: center; gap: 8px; }
 .quality-selector select { font-size: 0.9rem; background: transparent; border: none; color: inherit; cursor: pointer; outline: none; }
 .quality-selector option { background: #0f172a; color: white; }
@@ -66,118 +144,69 @@ h1 {
 .btn-secondary { background: transparent; border: 2px solid #6366f1; color: #818cf8; }
 .btn-danger { background: transparent; border: 2px solid #ef4444; color: #ef4444; }
 .btn-text { background: none; border: none; color: #60a5fa; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+
 .done-actions { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
-.progress-container { width: 100%; max-width: 800px; margin: 0 auto 1.5rem auto; height: 6px; background: #334155; border-radius: 10px; overflow: hidden; }
+.progress-container { height: 6px; background: #334155; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem !important; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); transition: width 0.3s; }
 
 .drag-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 999; display: flex; justify-content: center; align-items: center; color: white; font-size: 2rem; pointer-events: none; }
-/* 🟢 FIX: High Z-Index & Fixed Position */
+
 .theme-toggle {
-  position: fixed; /* Keeps it stuck to the screen corner even when scrolling */
-  top: 25px; 
-  right: 25px;
-  background: rgba(255, 255, 255, 0.1); 
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 1.2rem; 
-  cursor: pointer; 
-  border-radius: 50%; 
-  width: 45px; 
-  height: 45px;
-  
-  /* The Secret Sauce: Higher than everything else */
-  z-index: 2000; 
-  
-  backdrop-filter: blur(5px);
-  transition: all 0.2s ease;
+  position: fixed; top: 25px; right: 25px;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.2rem; cursor: pointer; border-radius: 50%; width: 45px; height: 45px;
+  z-index: 2000; backdrop-filter: blur(5px);
   display: flex; justify-content: center; align-items: center;
 }
 
-.theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: rotate(15deg) scale(1.1);
-}
-
-/* Ensure it looks good in Light Mode too */
-body.light .theme-toggle {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.1);
-  color: #333;
-}
-body.light .theme-toggle:hover {
-  background: rgba(0, 0, 0, 0.1);
-} 
-
 /* =========================================
-   3. SMALLER DYNAMIC GRID
+   4. DYNAMIC GRID (Portrait Mode - Fixed Sizing)
    ========================================= */
-
 .image-grid {
   display: grid;
-  gap: 15px; /* Tighter gap */
+  gap: 15px;
   width: 100%;
-  max-height: 220vh;
-  overflow-y: auto;
-  padding-right: 5px;
+  
+  /* 🟢 FIX: Remove Scrollbar */
+  /* Allow the grid to expand naturally down the page */
   justify-content: center; 
 }
-.image-grid::-webkit-scrollbar { width: 8px; }
-.image-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-.image-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
-
-/* --- COMPACT MODES --- */
-
-/* MODE 1: SINGLE IMAGE */
-.image-grid.grid-single {
-  display: flex;
-  justify-content: center;
+/* Grid Modes - Tighter constraints so they fit in one row */
+.image-grid.grid-single { 
+  display: flex; justify-content: center; 
 }
-.image-grid.grid-single .image-card {
-  width: 100%;
-  max-width: 350px; /* Much smaller showcase */
+.image-grid.grid-single .image-card { 
+  width: 100%; max-width: 400px; 
 }
 
-/* MODE 2: GALLERY (2-4 Images) */
-.image-grid.grid-few {
-  /* Min width 280px (was 350px) */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+/* 🟢 Small cards start shrinking at 200px */
+.image-grid.grid-few { 
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
 }
 
-/* MODE 3: STANDARD (5-12 Images) */
-.image-grid.grid-standard {
-  /* Min width 200px (was 260px) */
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+/* 🟢 Standard list shrinks to 150px */
+.image-grid.grid-standard { 
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
 }
 
-/* MODE 4: DENSE (13+ Images) */
-.image-grid.grid-dense {
-  /* Min width 130px (was 180px) */
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 10px;
+/* 🟢 Dense mode shrinks to 120px */
+.image-grid.grid-dense { 
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+  gap: 10px; 
 }
 
-
-/* =========================================
-   4. CARD STYLING (PORTRAIT)
-   ========================================= */
+/* Card Styling */
 .image-card {
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 10px; /* Smaller radius */
-  overflow: hidden;
-  display: flex; flex-direction: column;
+  border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
 }
-
 .image-wrapper {
-  position: relative;
-  width: 100%;
-  /* Portrait Aspect Ratio 2:3 */
-  aspect-ratio: 2/3;
-  height: auto; 
-  overflow: hidden; background: #000;
+  position: relative; width: 100%; aspect-ratio: 2/3; /* Portrait */
+  height: auto; overflow: hidden; background: #000;
 }
-
 .preview-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.2s; }
 .preview-img.raw-mode { filter: grayscale(40%) contrast(85%) brightness(90%); }
 
@@ -189,11 +218,75 @@ body.light .theme-toggle:hover {
 .card-info { padding: 8px; text-align: left; }
 .file-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; color: #e2e8f0; }
 .exif-badge { font-size: 0.65rem; background: rgba(0,0,0,0.3); color: #94a3b8; padding: 2px 4px; border-radius: 4px; margin-bottom: 6px; display: inline-block;}
-
 .btn-download-mini { width: 100%; padding: 6px; background: #334155; color: #60a5fa; border: none; border-radius: 5px; cursor: pointer; font-size: 0.7rem; font-weight: 700; }
 .btn-download-mini:hover { background: #60a5fa; color: white; }
 
-/* Light Mode Overrides */
+/* =========================================
+   5. CINEMATIC LOADER (Typewriter)
+   ========================================= */
+.intro-loader {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: #0f172a; 
+  display: flex; justify-content: center; align-items: center;
+  z-index: 99999;
+  transition: background-color 0.8s ease-in-out;
+}
+.intro-text-wrapper {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.8s ease-in-out;
+  width: 100%; text-align: center;
+}
+.intro-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 4rem; font-weight: 800; letter-spacing: -1px; margin: 0;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  transition: font-size 0.8s ease-in-out;
+}
+
+/* Move Up Animation */
+.intro-loader.move-up { background-color: transparent; pointer-events: none; }
+.intro-loader.move-up .intro-text-wrapper { top: 2rem; transform: translate(-50%, 0); }
+.intro-loader.move-up .intro-text { font-size: 2.2rem; }
+
+/* Cursor */
+.cursor {
+  display: inline-block; color: #a78bfa; -webkit-text-fill-color: #a78bfa;
+  margin-left: 2px; animation: blink 0.8s infinite;
+  font-weight: 200; font-size: 4rem;
+}
+.intro-loader.move-up .cursor { display: none; }
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
+/* =========================================
+   6. FOOTER STYLING (Strict Full Width)
+   ========================================= */
+.app-footer {
+  width: 100%;
+  padding: 2.5rem 0;
+  background: #0f172a;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 10;
+  margin-top: auto;
+}
+.footer-content { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.footer-logo {
+  margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -1px;
+  background: linear-gradient(135deg, #cbd5e1 0%, #64748b 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.footer-links { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.footer-link { color: #94a3b8; text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+.footer-link:hover { color: #60a5fa; text-decoration: underline; }
+.divider { color: #334155; }
+.copyright { margin: 0; font-size: 0.75rem; color: #475569; }
+
+/* =========================================
+   7. LIGHT MODE OVERRIDES
+   ========================================= */
 body.light .upload-zone { background: #ffffff; border-color: #cbd5e1; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
 body.light .pending-list-container { background: #ffffff; border-color: #cbd5e1; }
 body.light .list-header h3 { color: #1e293b; }
@@ -205,3 +298,21 @@ body.light .exif-badge { background: #f1f5f9; color: #64748b; }
 body.light .btn-download-mini { background: #eff6ff; color: #3b82f6; }
 body.light .btn-download-mini:hover { background: #3b82f6; color: white; }
 body.light .quality-selector option { background: white; color: black; }
+
+/* Light Mode Footer */
+body.light .app-footer { background: #ffffff; border-top-color: #e2e8f0; }
+body.light .footer-logo { 
+  background: linear-gradient(135deg, #334155 0%, #94a3b8 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+body.light .footer-link { color: #64748b; }
+body.light .footer-link:hover { color: #2563eb; }
+
+/* Light Mode Loader */
+body.light .intro-loader { background-color: #f8fafc; }
+body.light .intro-loader.move-up { background-color: transparent; }
+body.light .intro-text, body.light .main-logo {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+body.light .cursor { color: #7c3aed; -webkit-text-fill-color: #7c3aed; }
