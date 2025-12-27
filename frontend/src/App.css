@@ -103,7 +103,7 @@ body.light { background-color: #f1f5f9; color: #1e293b; }
   backdrop-filter: blur(12px);
   border: 2px dashed #475569; 
   border-radius: 16px;
-  padding: 2rem; 
+  /*padding: 2rem;*/ 
   text-align: center; 
   transition: all 0.3s ease; 
   cursor: pointer; 
