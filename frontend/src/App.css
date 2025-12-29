@@ -22,7 +22,7 @@ body.light { background-color: #f1f5f9; color: #1e293b; }
    ========================================= */
 .upload-zone, .pending-list-container, .controls-row, .progress-container { width: 100%; max-width: 800px; margin-left: auto !important; margin-right: auto !important; }
 
-.upload-zone { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 2px dashed #475569; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer; margin-bottom: 1.5rem; }
+.upload-zone { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 2px dashed #475569; border-radius: 16px; padding-top: 25px; padding-bottom: 20px; text-align: center; transition: all 0.3s ease; cursor: pointer; margin-bottom: 1.5rem; }
 .upload-zone:hover { border-color: #8b5cf6; background: rgba(30, 41, 59, 0.7); }
 .upload-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 
