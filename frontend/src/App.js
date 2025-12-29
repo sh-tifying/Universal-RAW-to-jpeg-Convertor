@@ -27,8 +27,8 @@ function App() {
   const fileInputRef = useRef(null);
   
   // 🔴 IMPORTANT: Change this URL to your Render backend URL when deploying
-  //const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
-  const API_URL = "http://127.0.0.1:5000/convert"; 
+  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
+  //const API_URL = "http://127.0.0.1:5000/convert"; 
 
   // 🟢 ANIMATION SEQUENCE
   useEffect(() => {
@@ -306,7 +306,7 @@ function App() {
         <div className="footer-content">
           <h2 className="footer-logo">RAWStack.</h2>
           <div className="footer-links">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub Source</a>
+            <a href="https://github.com/sh-tifying/Universal-RAW-to-jpeg-Convertor.git" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
             <span className="divider">•</span>
             <a href="#" className="footer-link">Terms & Conditions</a>
             <span className="divider">•</span>
