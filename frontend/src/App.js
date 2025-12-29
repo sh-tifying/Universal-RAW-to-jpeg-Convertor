@@ -27,8 +27,8 @@ function App() {
   const fileInputRef = useRef(null);
   
   // 🔴 IMPORTANT: Change this URL to your Render backend URL when deploying
-  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
-  //const API_URL = "http://127.0.0.1:5000/convert"; 
+  //const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
+  const API_URL = "http://127.0.0.1:5000/convert"; 
 
   // 🟢 ANIMATION SEQUENCE
   useEffect(() => {
@@ -53,11 +53,39 @@ function App() {
     e.target.value = ''; 
   };
 
+  // 🟢 UPDATED: Strict File Type Validation
   const handleFiles = (files) => {
+    // 1. Define Supported Formats
+    const allowedExtensions = ['cr3', 'cr2', 'nef', 'arw', 'dng', 'raf', 'orf', 'rw2'];
     const newFiles = Array.from(files);
-    setSelectedFiles(prev => [...prev, ...newFiles]);
-    setProgress(0);
-    toast.success(`Added ${newFiles.length} files!`, { icon: 'Hz' });
+
+    // 2. Filter: Only keep RAW files
+    const validFiles = newFiles.filter(file => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      return allowedExtensions.includes(ext);
+    });
+
+    const invalidCount = newFiles.length - validFiles.length;
+
+    // 3. Show Warning if junk files were selected
+    if (invalidCount > 0) {
+      toast("Only RAW files (CR3, ARW, NEF...) are supported.", {
+        icon: '⚠️',
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+        },
+        duration: 4000
+      });
+    }
+
+    // 4. Add ONLY Valid files to the queue
+    if (validFiles.length > 0) {
+      setSelectedFiles(prev => [...prev, ...validFiles]);
+      setProgress(0);
+      toast.success(`Added ${validFiles.length} RAW file(s)!`, { icon: 'Hz' });
+    }
   };
 
   const removeFile = (indexToRemove) => {
@@ -77,10 +105,9 @@ function App() {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  // 🟢 HELPER: GENERATE FILENAME (Now handles Extension!)
+  // 🟢 HELPER: GENERATE FILENAME
   const generateFilename = (baseName, index, originalName, targetFormat) => {
     const currentNum = startSeq + index;
-    // Determine extension
     const ext = targetFormat === 'jpeg' ? 'jpg' : targetFormat;
 
     if (!baseName.trim()) {
@@ -119,7 +146,6 @@ function App() {
           const url = window.URL.createObjectURL(blob);
           const cameraModel = response.headers.get("X-Exif-Camera") || "Unknown Camera";
 
-          // 🟢 Generate name with correct extension
           const finalName = generateFilename(batchName, i, file.name, format);
 
           setConvertedImages(prev => [...prev, {
@@ -134,7 +160,6 @@ function App() {
       setProgress(Math.round(((i + 1) / selectedFiles.length) * 100));
     }
     
-    // Auto-increment sequence for next batch
     setStartSeq(prev => prev + selectedFiles.length);
 
     setIsProcessing(false);
@@ -211,7 +236,6 @@ function App() {
 
         <div className="controls-row">
           
-          {/* 1. RENAME GROUP */}
           <div className="rename-group">
             <div className="input-with-preview">
               <div className="rename-inputs">
@@ -239,7 +263,6 @@ function App() {
             </div>
           </div>
 
-          {/* 2. FORMAT SELECTOR */}
           <div className="quality-selector">
             <label>Format:</label>
             <select value={format} onChange={(e) => setFormat(e.target.value)}>
@@ -249,8 +272,6 @@ function App() {
             </select>
           </div>
 
-          {/* 3. QUALITY SELECTOR */}
-          {/* Disable Quality if PNG (Lossless) is selected */}
           <div className={`quality-selector ${format === 'png' ? 'disabled-selector' : ''}`}>
             <label>Quality:</label>
             <select value={quality} onChange={(e) => setQuality(e.target.value)} disabled={format === 'png'}>
@@ -268,7 +289,6 @@ function App() {
           <div className="progress-container"><div className="progress-fill" style={{ width: `${progress}%` }}></div></div>
         ) : null}
 
-        {/* 🟢 SLICK FLOATING ACTION DOCK (Choice A) */}
         {!hasQueue && convertedImages.length > 0 && (
             <div className="done-actions-dock">
               <button className="btn btn-ghost" onClick={triggerFileUpload}><span>➕</span> Add More</button>
@@ -286,7 +306,7 @@ function App() {
         <div className="footer-content">
           <h2 className="footer-logo">RAWStack.</h2>
           <div className="footer-links">
-            <a href="https://github.com/sh-tifying/Universal-RAW-to-jpeg-Convertor.git" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub Source</a>
             <span className="divider">•</span>
             <a href="#" className="footer-link">Terms & Conditions</a>
             <span className="divider">•</span>
