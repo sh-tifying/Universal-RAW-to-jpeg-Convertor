@@ -1,125 +1,32 @@
-/* App.css - Final Pro Version (All Fixes Included) */
+/* App.css - Final Pro Version */
 
 /* =========================================
    1. GLOBAL & RESET
    ========================================= */
-body {
-  margin: 0; padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center;
-  overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  width: 100%;
-}
-
+body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; width: 100%; }
 body.dark { background-color: #0f172a; color: #f1f5f9; }
 body.light { background-color: #f1f5f9; color: #1e293b; }
 
-/* 🟢 APP WRAPPER (Fade In Transition) */
-.app-wrapper {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  transition: opacity 1s ease-in-out;
-}
+.app-wrapper { width: 100%; min-height: 100vh; display: flex; flex-direction: column; transition: opacity 1s ease-in-out; }
+.app-wrapper.hidden .app-container, .app-wrapper.hidden .app-footer, .app-wrapper.hidden .theme-toggle { opacity: 0; }
+.app-wrapper.visible .app-container, .app-wrapper.visible .app-footer, .app-wrapper.visible .theme-toggle { opacity: 1; }
 
-/* Visibility states for transition */
-.app-wrapper.hidden .app-container, 
-.app-wrapper.hidden .app-footer,
-.app-wrapper.hidden .theme-toggle {
-  opacity: 0;
-}
-.app-wrapper.visible .app-container,
-.app-wrapper.visible .app-footer,
-.app-wrapper.visible .theme-toggle {
-  opacity: 1;
-}
-
-/* =========================================
-   2. MAIN CONTENT LAYOUT (Strict Centering)
-   ========================================= */
-.app-container {
-  width: 100%;
-  max-width: 1200px; /* Constrain max width for focus */
-  margin: 0 auto;    /* Center the container */
-  padding: 1rem 2rem;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 10;
-  
-  display: flex;
-  flex-direction: column;
-  
-  /* 🟢 FORCE CENTER ALIGNMENT */
-  align-items: center; 
-}
-
-.header { 
-  text-align: center; 
-  margin-bottom: 2rem; 
-  margin-top: 1rem;
-  width: 100%; 
-}
-
-/* 🟢 MAIN LOGO STYLING (Matches Loader) */
-.main-logo {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin: 0;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: opacity 0.1s;
-}
-
-/* "Ghost" Logic: Invisible while loader is active */
-.invisible-logo {
-  opacity: 0 !important;
-  visibility: hidden;
-}
-
+.app-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; box-sizing: border-box; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; }
+.header { text-align: center; margin-bottom: 2rem; margin-top: 1rem; width: 100%; }
+.main-logo { font-size: 2.2rem; font-weight: 800; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; transition: opacity 0.1s; }
+.invisible-logo { opacity: 0 !important; visibility: hidden; }
 .subtitle { font-size: 0.9rem; margin-top: 0.2rem; color: #94a3b8; }
 
 /* =========================================
-   3. UI COMPONENTS (Auto-Margin Fixes)
+   3. UI COMPONENTS
    ========================================= */
+.upload-zone, .pending-list-container, .controls-row, .progress-container { width: 100%; max-width: 800px; margin-left: auto !important; margin-right: auto !important; }
 
-/* 🟢 FORCE CENTER: Belt & Suspenders approach */
-.upload-zone, 
-.pending-list-container, 
-.controls-row, 
-.progress-container {
-  width: 100%;
-  max-width: 800px; /* Consistent stacking width */
-  margin-left: auto !important; 
-  margin-right: auto !important;
-}
-
-.upload-zone {
-  background: rgba(30, 41, 59, 0.4); 
-  backdrop-filter: blur(12px);
-  border: 2px dashed #475569; 
-  border-radius: 16px;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  text-align: center; 
-  transition: all 0.3s ease; 
-  cursor: pointer; 
-  margin-bottom: 1.5rem;
-}
+.upload-zone { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 2px dashed #475569; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer; margin-bottom: 1.5rem; }
 .upload-zone:hover { border-color: #8b5cf6; background: rgba(30, 41, 59, 0.7); }
 .upload-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 
-.pending-list-container {
-  background: rgba(30, 41, 59, 0.4); 
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 12px; 
-  padding: 1rem; 
-  margin-bottom: 1.5rem;
-}
+.pending-list-container { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; }
 .list-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
 .file-list { max-height: 150px; overflow-y: auto; padding-right: 5px; }
 .file-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.2); margin-bottom: 5px; padding: 6px 10px; border-radius: 6px; }
@@ -127,167 +34,89 @@ body.light { background-color: #f1f5f9; color: #1e293b; }
 .btn-remove { background: none; border: none; cursor: pointer; opacity: 0.7; }
 .btn-remove:hover { opacity: 1; color: #ef4444; }
 
-.controls-row { 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  gap: 15px; 
-  margin-bottom: 1.5rem; 
-  flex-wrap: wrap; 
-}
+.controls-row { display: flex; justify-content: center; align-items: flex-start; gap: 15px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
-.quality-selector { background: rgba(30, 41, 59, 0.6); padding: 8px 15px; border-radius: 40px; border: 1px solid rgba(148, 163, 184, 0.2); display: flex; align-items: center; gap: 8px; }
+/* RENAME GROUP */
+.rename-group { display: flex; flex-direction: column; align-items: center; }
+.rename-inputs { display: flex; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 40px; overflow: hidden; }
+.batch-name-input { background: transparent; border: none; color: white; padding: 8px 15px; font-size: 0.9rem; outline: none; min-width: 180px; text-align: left; }
+.batch-name-input::placeholder { color: #64748b; }
+.start-seq-input { background: rgba(0, 0, 0, 0.2); border: none; border-left: 1px solid rgba(148, 163, 184, 0.2); color: #60a5fa; font-weight: 700; padding: 8px 10px; font-size: 0.9rem; outline: none; width: 50px; text-align: center; }
+.start-seq-input:focus, .batch-name-input:focus { background: rgba(30, 41, 59, 0.9); }
+.rename-preview { margin-top: 5px; font-size: 0.75rem; color: #94a3b8; font-family: monospace; }
+.rename-preview span { color: #34d399; }
+
+/* QUALITY SELECTOR */
+.quality-selector { background: rgba(30, 41, 59, 0.6); padding: 8px 15px; border-radius: 40px; border: 1px solid rgba(148, 163, 184, 0.2); display: flex; align-items: center; gap: 8px; height: 36px; box-sizing: border-box; }
 .quality-selector select { font-size: 0.9rem; background: transparent; border: none; color: inherit; cursor: pointer; outline: none; }
 .quality-selector option { background: #0f172a; color: white; }
+.disabled-selector { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
-.btn { padding: 8px 20px; border-radius: 40px; border: none; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
+.btn { padding: 8px 20px; border-radius: 40px; border: none; font-weight: 700; cursor: pointer; font-size: 0.8rem; height: 36px; }
 .btn-primary { background: linear-gradient(90deg, #4f46e5, #ec4899); color: white; }
 .btn-secondary { background: transparent; border: 2px solid #6366f1; color: #818cf8; }
 .btn-danger { background: transparent; border: 2px solid #ef4444; color: #ef4444; }
 .btn-text { background: none; border: none; color: #60a5fa; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
 
-.done-actions { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-
 .progress-container { height: 6px; background: #334155; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem !important; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); transition: width 0.3s; }
-
 .drag-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 999; display: flex; justify-content: center; align-items: center; color: white; font-size: 2rem; pointer-events: none; }
-
-.theme-toggle {
-  position: fixed; top: 25px; right: 25px;
-  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 1.2rem; cursor: pointer; border-radius: 50%; width: 45px; height: 45px;
-  z-index: 2000; backdrop-filter: blur(5px);
-  display: flex; justify-content: center; align-items: center;
-}
+.theme-toggle { position: fixed; top: 25px; right: 25px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 1.2rem; cursor: pointer; border-radius: 50%; width: 45px; height: 45px; z-index: 2000; backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; }
 
 /* =========================================
-   4. DYNAMIC GRID (Portrait Mode - Fixed Sizing)
+   8. SLICK ACTION DOCK (Choice A Button Layout)
    ========================================= */
-.image-grid {
-  display: grid;
-  gap: 15px;
-  width: 100%;
-  
-  /* 🟢 FIX: Remove Scrollbar */
-  /* Allow the grid to expand naturally down the page */
-  justify-content: center; 
-}
+.done-actions-dock { display: flex; align-items: center; justify-content: center; gap: 20px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px 30px; border-radius: 24px; margin-bottom: 2rem; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5); animation: floatUp 0.4s ease-out; }
+@keyframes floatUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Grid Modes - Tighter constraints so they fit in one row */
-.image-grid.grid-single { 
-  display: flex; justify-content: center; 
-}
-.image-grid.grid-single .image-card { 
-  width: 100%; max-width: 400px; 
-}
+.btn-hero { background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%); color: white; border: none; padding: 12px 32px; border-radius: 50px; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 0 20px rgba(79, 70, 229, 0.5); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px; }
+.btn-hero:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 0 30px rgba(236, 72, 153, 0.7); }
 
-/* 🟢 Small cards start shrinking at 200px */
-.image-grid.grid-few { 
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-}
+.btn-ghost { background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff; padding: 10px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px; }
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.15); border-color: white; transform: translateY(-1px); }
 
-/* 🟢 Standard list shrinks to 150px */
-.image-grid.grid-standard { 
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-}
+.btn-ghost.danger-hover { border-color: rgba(239, 68, 68, 0.4); }
+.btn-ghost.danger-hover:hover { color: #ffcccc; border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
 
-/* 🟢 Dense mode shrinks to 120px */
-.image-grid.grid-dense { 
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
-  gap: 10px; 
-}
+/* GRID & LOADER */
+.image-grid { display: grid; gap: 15px; width: 100%; justify-content: center; }
+.image-grid.grid-single { display: flex; justify-content: center; } .image-grid.grid-single .image-card { width: 100%; max-width: 400px; }
+.image-grid.grid-few { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.image-grid.grid-standard { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.image-grid.grid-dense { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
 
-/* Card Styling */
-.image-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
-}
-.image-wrapper {
-  position: relative; width: 100%; aspect-ratio: 2/3; /* Portrait */
-  height: auto; overflow: hidden; background: #000;
-}
+.image-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.1); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.image-wrapper { position: relative; width: 100%; aspect-ratio: 2/3; height: auto; overflow: hidden; background: #000; }
 .preview-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.2s; }
 .preview-img.raw-mode { filter: grayscale(40%) contrast(85%) brightness(90%); }
-
-.raw-toggle-btn {
-  position: absolute; top: 6px; right: 6px;
-  background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3);
-  padding: 3px 8px; border-radius: 12px; font-size: 0.65rem; cursor: pointer;
-}
+.raw-toggle-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 3px 8px; border-radius: 12px; font-size: 0.65rem; cursor: pointer; }
 .card-info { padding: 8px; text-align: left; }
 .file-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; color: #e2e8f0; }
 .exif-badge { font-size: 0.65rem; background: rgba(0,0,0,0.3); color: #94a3b8; padding: 2px 4px; border-radius: 4px; margin-bottom: 6px; display: inline-block;}
 .btn-download-mini { width: 100%; padding: 6px; background: #334155; color: #60a5fa; border: none; border-radius: 5px; cursor: pointer; font-size: 0.7rem; font-weight: 700; }
 .btn-download-mini:hover { background: #60a5fa; color: white; }
 
-/* =========================================
-   5. CINEMATIC LOADER (Typewriter)
-   ========================================= */
-.intro-loader {
-  position: fixed; top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background-color: #0f172a; 
-  display: flex; justify-content: center; align-items: center;
-  z-index: 99999;
-  transition: background-color 0.8s ease-in-out;
-}
-.intro-text-wrapper {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.8s ease-in-out;
-  width: 100%; text-align: center;
-}
-.intro-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 4rem; font-weight: 800; letter-spacing: -1px; margin: 0;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  transition: font-size 0.8s ease-in-out;
-}
-
-/* Move Up Animation */
+.intro-loader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 99999; transition: background-color 0.8s ease-in-out; }
+.intro-text-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: all 0.8s ease-in-out; width: 100%; text-align: center; }
+.intro-text { font-family: 'Inter', sans-serif; font-size: 4rem; font-weight: 800; letter-spacing: -1px; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; transition: font-size 0.8s ease-in-out; }
 .intro-loader.move-up { background-color: transparent; pointer-events: none; }
 .intro-loader.move-up .intro-text-wrapper { top: 2rem; transform: translate(-50%, 0); }
 .intro-loader.move-up .intro-text { font-size: 2.2rem; }
-
-/* Cursor */
-.cursor {
-  display: inline-block; color: #a78bfa; -webkit-text-fill-color: #a78bfa;
-  margin-left: 2px; animation: blink 0.8s infinite;
-  font-weight: 200; font-size: 4rem;
-}
+.cursor { display: inline-block; color: #a78bfa; -webkit-text-fill-color: #a78bfa; margin-left: 2px; animation: blink 0.8s infinite; font-weight: 200; font-size: 4rem; }
 .intro-loader.move-up .cursor { display: none; }
 @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
 
-/* =========================================
-   6. FOOTER STYLING (Strict Full Width)
-   ========================================= */
-.app-footer {
-  width: 100%;
-  padding: 2.5rem 0;
-  background: #0f172a;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 10;
-  margin-top: auto;
-}
+.app-footer { width: 100%; padding: 2.5rem 0; background: #0f172a; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; z-index: 10; margin-top: auto; }
 .footer-content { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-.footer-logo {
-  margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -1px;
-  background: linear-gradient(135deg, #cbd5e1 0%, #64748b 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
+.footer-logo { margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, #cbd5e1 0%, #64748b 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .footer-links { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
-.footer-link { color: #94a3b8; text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
-.footer-link:hover { color: #60a5fa; text-decoration: underline; }
-.divider { color: #334155; }
-.copyright { margin: 0; font-size: 0.75rem; color: #475569; }
+.footer-link { color: #94a3b8; text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; } .footer-link:hover { color: #60a5fa; text-decoration: underline; }
+.divider { color: #334155; } .copyright { margin: 0; font-size: 0.75rem; color: #475569; }
 
-/* =========================================
-   7. LIGHT MODE OVERRIDES
-   ========================================= */
+body.light .rename-inputs { background: #ffffff; border-color: #cbd5e1; }
+body.light .batch-name-input { color: #1e293b; }
+body.light .start-seq-input { background: #f1f5f9; border-left-color: #cbd5e1; color: #3b82f6; }
+body.light .rename-preview { color: #64748b; } body.light .rename-preview span { color: #059669; }
 body.light .upload-zone { background: #ffffff; border-color: #cbd5e1; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
 body.light .pending-list-container { background: #ffffff; border-color: #cbd5e1; }
 body.light .list-header h3 { color: #1e293b; }
@@ -296,24 +125,64 @@ body.light .file-item-name { color: #334155; }
 body.light .image-card { background: #ffffff; border-color: #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 body.light .file-name { color: #1e293b; }
 body.light .exif-badge { background: #f1f5f9; color: #64748b; }
-body.light .btn-download-mini { background: #eff6ff; color: #3b82f6; }
-body.light .btn-download-mini:hover { background: #3b82f6; color: white; }
+body.light .btn-download-mini { background: #eff6ff; color: #3b82f6; } body.light .btn-download-mini:hover { background: #3b82f6; color: white; }
 body.light .quality-selector option { background: white; color: black; }
-
-/* Light Mode Footer */
 body.light .app-footer { background: #ffffff; border-top-color: #e2e8f0; }
-body.light .footer-logo { 
-  background: linear-gradient(135deg, #334155 0%, #94a3b8 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
-body.light .footer-link { color: #64748b; }
-body.light .footer-link:hover { color: #2563eb; }
-
-/* Light Mode Loader */
-body.light .intro-loader { background-color: #f8fafc; }
-body.light .intro-loader.move-up { background-color: transparent; }
-body.light .intro-text, body.light .main-logo {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
+body.light .footer-logo { background: linear-gradient(135deg, #334155 0%, #94a3b8 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .footer-link { color: #64748b; } body.light .footer-link:hover { color: #2563eb; }
+body.light .intro-loader { background-color: #f8fafc; } body.light .intro-loader.move-up { background-color: transparent; }
+body.light .intro-text, body.light .main-logo { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 body.light .cursor { color: #7c3aed; -webkit-text-fill-color: #7c3aed; }
+
+/* Light Mode Dock */
+body.light .done-actions-dock { background: rgba(255, 255, 255, 0.95); border-color: #cbd5e1; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+body.light .btn-ghost { color: #334155; border-color: #cbd5e1; }
+body.light .btn-ghost:hover { background: #f1f5f9; color: #0f172a; border-color: #94a3b8; }
+/* ... existing light mode styles ... */
+
+/* 🟢 LIGHT MODE: INPUTS & SELECTORS (Clean & Polished) */
+body.light .rename-inputs,
+body.light .quality-selector, 
+body.light .batch-name-input { 
+  background: #ffffff; 
+  border: 1px solid #cbd5e1; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle lift */
+  color: #334155; 
+}
+
+/* Fix text inside the dropdowns */
+body.light .quality-selector select {
+  color: #334155;
+  font-weight: 500;
+}
+
+/* Fix dropdown options menu */
+body.light .quality-selector option { 
+  background: white; 
+  color: #334155; 
+}
+
+/* Hover effects for inputs in Light Mode */
+body.light .quality-selector:hover,
+body.light .rename-inputs:hover,
+body.light .batch-name-input:focus {
+  border-color: #94a3b8;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Batch Rename Specifics for Light Mode */
+body.light .batch-name-input { color: #1e293b; }
+body.light .batch-name-input::placeholder { color: #94a3b8; }
+
+body.light .start-seq-input { 
+  background: #f1f5f9; 
+  border-left-color: #cbd5e1; 
+  color: #2563eb; /* Bright blue number */
+}
+
+/* The disabled state in light mode */
+body.light .disabled-selector {
+  background: #f1f5f9; /* Light gray background to show disabled */
+  border-color: #e2e8f0;
+  opacity: 0.6;
+}

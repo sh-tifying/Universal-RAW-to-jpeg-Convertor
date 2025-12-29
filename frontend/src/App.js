@@ -10,36 +10,36 @@ function App() {
   const [showLoader, setShowLoader] = useState(true);      
   const [isTransitioning, setIsTransitioning] = useState(false); 
 
+  // 🟢 APP STATES
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedImages, setConvertedImages] = useState([]);
   const [progress, setProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false); 
-  const [quality, setQuality] = useState(90); 
-  const [theme, setTheme] = useState('dark'); 
   
+  // 🟢 RENAMING & FORMAT STATES
+  const [batchName, setBatchName] = useState('');
+  const [startSeq, setStartSeq] = useState(1);
+  const [format, setFormat] = useState('jpeg'); // 'jpeg', 'png', 'webp'
+  const [quality, setQuality] = useState(90); 
+  
+  const [theme, setTheme] = useState('dark'); 
   const fileInputRef = useRef(null);
-  const API_URL = "https://universal-raw-to-jpeg-convertor-api.onrender.com/convert";
-  //const API_URL = "http://127.0.0.1:5000/convert"; 
+  
+  // 🔴 IMPORTANT: Change this URL to your Render backend URL when deploying
+  const API_URL = "http://127.0.0.1:5000/convert"; 
 
   // 🟢 ANIMATION SEQUENCE
   useEffect(() => {
-    // 1. Typing happens for first 2.2s
-    const moveTimer = setTimeout(() => {
-      setIsTransitioning(true); // Trigger Slide Up
-    }, 2200);
-
-    // 2. Slide Up takes 0.8s. After 3s total, remove loader.
-    const removeTimer = setTimeout(() => {
-      setShowLoader(false); // This triggers the Main Logo to appear
-    }, 3000);
-
+    const moveTimer = setTimeout(() => { setIsTransitioning(true); }, 2200);
+    const removeTimer = setTimeout(() => { setShowLoader(false); }, 3000);
     return () => { clearTimeout(moveTimer); clearTimeout(removeTimer); };
   }, []);
 
   useEffect(() => { document.body.className = theme; }, [theme]);
   const toggleTheme = () => setTheme(curr => curr === 'dark' ? 'light' : 'dark');
 
+  // 🟢 HANDLERS
   const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
   const handleDrop = (e) => {
@@ -66,12 +66,35 @@ function App() {
   const handleStartFresh = () => {
     setSelectedFiles([]);
     setConvertedImages([]);
+    setBatchName(''); 
+    setStartSeq(1);
     setProgress(0);
     toast('Started a new batch', { icon: '✨' });
   };
 
   const triggerFileUpload = () => {
     if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  // 🟢 HELPER: GENERATE FILENAME (Now handles Extension!)
+  const generateFilename = (baseName, index, originalName, targetFormat) => {
+    const currentNum = startSeq + index;
+    // Determine extension
+    const ext = targetFormat === 'jpeg' ? 'jpg' : targetFormat;
+
+    if (!baseName.trim()) {
+      return originalName.substring(0, originalName.lastIndexOf('.')) + "." + ext;
+    }
+
+    const hashMatch = baseName.match(/#+/);
+    if (hashMatch) {
+      const padding = hashMatch[0].length;
+      const numStr = currentNum.toString().padStart(padding, '0');
+      return baseName.replace(hashMatch[0], numStr) + "." + ext;
+    } else {
+      const numStr = currentNum.toString().padStart(3, '0');
+      return `${baseName.trim()}_${numStr}.${ext}`;
+    }
   };
 
   const handleConvert = async () => {
@@ -85,23 +108,34 @@ function App() {
       const file = selectedFiles[i];
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("quality", quality); 
+      formData.append("quality", quality);
+      formData.append("format", format); 
 
       try {
         const response = await fetch(API_URL, { method: "POST", body: formData });
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
-          const newName = file.name.substring(0, file.name.lastIndexOf('.')) + ".jpg";
           const cameraModel = response.headers.get("X-Exif-Camera") || "Unknown Camera";
 
+          // 🟢 Generate name with correct extension
+          const finalName = generateFilename(batchName, i, file.name, format);
+
           setConvertedImages(prev => [...prev, {
-            originalName: file.name, newName, url, data: blob, exif: { camera: cameraModel }
+            originalName: file.name, 
+            newName: finalName, 
+            url, 
+            data: blob, 
+            exif: { camera: cameraModel }
           }]);
         } else { errorCount++; toast.error(`Failed: ${file.name}`); }
       } catch (error) { console.error(error); errorCount++; }
       setProgress(Math.round(((i + 1) / selectedFiles.length) * 100));
     }
+    
+    // Auto-increment sequence for next batch
+    setStartSeq(prev => prev + selectedFiles.length);
+
     setIsProcessing(false);
     setSelectedFiles([]); 
     toast.dismiss(toastId);
@@ -135,9 +169,7 @@ function App() {
     >
       <Toaster position="top-right" /> 
       <ParticlesBackground />
-      
       {showLoader && <IntroLoader transitioning={isTransitioning} />}
-
       {isDragging && <div className="drag-overlay"><h1>📂 Drop to Add Files</h1></div>}
       <button className="theme-toggle" onClick={toggleTheme}>{theme === 'dark' ? '☀️' : '🌙'}</button>
 
@@ -145,7 +177,6 @@ function App() {
         <input type="file" multiple accept=".CR3,.CR2,.NEF,.ARW,.DNG,.RAF,.ORF,.RW2" onChange={handleFileChange} style={{ display: 'none' }} ref={fileInputRef} />
 
         <header className="header">
-          {/* Main Logo stays HIDDEN until the loader is completely gone */}
           <h1 className={`main-logo ${showLoader ? 'invisible-logo' : ''}`}>RAWStack.</h1>
           <p className="subtitle">Pro Converter Suite</p>
         </header>
@@ -178,14 +209,56 @@ function App() {
         )}
 
         <div className="controls-row">
+          
+          {/* 1. RENAME GROUP */}
+          <div className="rename-group">
+            <div className="input-with-preview">
+              <div className="rename-inputs">
+                <input 
+                  type="text" 
+                  className="batch-name-input" 
+                  placeholder="Rename (e.g. Trip-###)" 
+                  value={batchName}
+                  onChange={(e) => setBatchName(e.target.value)}
+                />
+                <input 
+                  type="number" 
+                  className="start-seq-input" 
+                  value={startSeq}
+                  min="1"
+                  onChange={(e) => setStartSeq(parseInt(e.target.value) || 1)}
+                  title="Start Sequence Number"
+                />
+              </div>
+              {batchName && (
+                <div className="rename-preview">
+                  Next: <span>{generateFilename(batchName, 0, "sample.raw", format)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 2. FORMAT SELECTOR */}
           <div className="quality-selector">
+            <label>Format:</label>
+            <select value={format} onChange={(e) => setFormat(e.target.value)}>
+              <option value="jpeg">JPEG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WebP</option>
+            </select>
+          </div>
+
+          {/* 3. QUALITY SELECTOR */}
+          {/* Disable Quality if PNG (Lossless) is selected */}
+          <div className={`quality-selector ${format === 'png' ? 'disabled-selector' : ''}`}>
             <label>Quality:</label>
-            <select value={quality} onChange={(e) => setQuality(e.target.value)}>
+            <select value={quality} onChange={(e) => setQuality(e.target.value)} disabled={format === 'png'}>
               <option value="100">Lossless</option>
               <option value="90">High</option>
               <option value="75">Web</option>
             </select>
           </div>
+
           {hasQueue && !isProcessing && <button className="btn btn-primary" onClick={handleConvert}>CONVERT {selectedFiles.length} FILES</button>}
           {isProcessing && <button className="btn btn-primary" disabled>PROCESSING...</button>}
         </div>
@@ -194,11 +267,12 @@ function App() {
           <div className="progress-container"><div className="progress-fill" style={{ width: `${progress}%` }}></div></div>
         ) : null}
 
+        {/* 🟢 SLICK FLOATING ACTION DOCK (Choice A) */}
         {!hasQueue && convertedImages.length > 0 && (
-            <div className="done-actions">
-              <button className="btn btn-secondary" onClick={triggerFileUpload}>➕ ADD MORE</button>
-              <button className="btn btn-primary" onClick={downloadAll}>⬇️ DOWNLOAD ZIP</button>
-              <button className="btn btn-danger" onClick={handleStartFresh}>🔄 NEW BATCH</button>
+            <div className="done-actions-dock">
+              <button className="btn btn-ghost" onClick={triggerFileUpload}><span>➕</span> Add More</button>
+              <button className="btn btn-hero" onClick={downloadAll}><span>⬇️</span> Download All</button>
+              <button className="btn btn-ghost danger-hover" onClick={handleStartFresh}><span>🔄</span> New Batch</button>
             </div>
         )}
 
@@ -227,47 +301,33 @@ function App() {
 function IntroLoader({ transitioning }) {
   const [text, setText] = useState("");
   const fullText = "RAWStack.";
-
   useEffect(() => {
     let i = 0;
-    const typingInterval = setInterval(() => {
-      setText(fullText.slice(0, i + 1));
-      i++;
-      if (i === fullText.length) clearInterval(typingInterval);
-    }, 120); 
+    const typingInterval = setInterval(() => { setText(fullText.slice(0, i + 1)); i++; if (i === fullText.length) clearInterval(typingInterval); }, 120); 
     return () => clearInterval(typingInterval);
   }, []);
-
   return (
     <div className={`intro-loader ${transitioning ? 'move-up' : ''}`}>
-      <div className="intro-text-wrapper">
-        <h1 className="intro-text">
-          {text}<span className={`cursor ${transitioning ? 'hide-cursor' : ''}`}>|</span>
-        </h1>
-      </div>
+      <div className="intro-text-wrapper"><h1 className="intro-text">{text}<span className={`cursor ${transitioning ? 'hide-cursor' : ''}`}>|</span></h1></div>
     </div>
   );
 }
-
 function ImageCard({ img }) {
   const [showRaw, setShowRaw] = useState(false);
   return (
     <div className="image-card">
       <div className="image-wrapper">
         <img src={img.url} alt="Result" className={`preview-img ${showRaw ? 'raw-mode' : ''}`}/>
-        <button className="raw-toggle-btn" onMouseDown={() => setShowRaw(true)} onMouseUp={() => setShowRaw(false)} onMouseLeave={() => setShowRaw(false)} onTouchStart={() => setShowRaw(true)} onTouchEnd={() => setShowRaw(false)}>
-          {showRaw ? 'RAW' : 'JPEG'}
-        </button>
+        <button className="raw-toggle-btn" onMouseDown={() => setShowRaw(true)} onMouseUp={() => setShowRaw(false)} onMouseLeave={() => setShowRaw(false)} onTouchStart={() => setShowRaw(true)} onTouchEnd={() => setShowRaw(false)}>{showRaw ? 'RAW' : img.newName.split('.').pop().toUpperCase()}</button>
       </div>
       <div className="card-info">
         <div className="file-name">{img.newName}</div>
         <div className="exif-badge">📷 {img.exif.camera}</div>
         <a href={img.url} download={img.newName} style={{textDecoration: 'none'}}>
-          <button className="btn-download-mini">SAVE JPEG</button>
+          <button className="btn-download-mini">SAVE {img.newName.split('.').pop().toUpperCase()}</button>
         </a>
       </div>
     </div>
   );
 }
-
 export default App;
